@@ -4,6 +4,7 @@ import { TopNav } from "./components/TopNav";
 import DailyEntryPage from "./pages/DailyEntryPage";
 import { DashboardOverview } from "./pages/DashboardOverview";
 import EmployeeDirectoryPage from "./pages/EmployeeDirectoryPage";
+import PayrollPage from "./pages/PayrollPage";
 
 export type Page = "dashboard" | "daily-entry" | "employees" | "payroll";
 
@@ -19,7 +20,7 @@ function App() {
         {activePage === "dashboard" && <DashboardOverview />}
         {activePage === "daily-entry" && <DailyEntryPage />}
         {activePage === "employees" && <EmployeeDirectoryPage />}
-        {/* Add more pages here as you build them */}
+        {activePage === "payroll" && <PayrollPage />}
       </main>
     </div>
   );

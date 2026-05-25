@@ -11,7 +11,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "dashboard", label: "Dashboard", page: "dashboard" },
   { icon: "group", label: "Employee Directory", page: "employees" },
   { icon: "event_available", label: "Daily Entry", page: "daily-entry" },
-  // { icon: "payments", label: "Payroll Settings", page: "payroll" },
+  { icon: "payments", label: "Payroll", page: "payroll" },
 ];
 
 interface SideNavProps {
