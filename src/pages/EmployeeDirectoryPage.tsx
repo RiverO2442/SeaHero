@@ -453,6 +453,16 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const handleDeleteEmployee = (id: string) => {
+    setEmployees((prev) => {
+      const next = prev.filter((e) => e.id !== id);
+      localStorage.setItem("salarypro_employees", JSON.stringify(next));
+      return next;
+    });
+    setDeleteConfirm(null);
+  };
 
   const handleAddEmployee = (emp: DirectoryEmployee) => {
     setEmployees((prev) => {
@@ -665,11 +675,29 @@ const EmployeeDirectoryPage: React.FC = () => {
 
                   {/* Actions */}
                   <td className="px-6 py-4 text-right">
-                    <button className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-100 rounded-lg text-slate-500">
-                      <span className="material-symbols-outlined">
-                        more_vert
-                      </span>
-                    </button>
+                    {deleteConfirm === emp.id ? (
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleDeleteEmployee(emp.id)}
+                          className="px-2.5 py-1 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm(null)}
+                          className="px-2.5 py-1 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteConfirm(emp.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 hover:text-red-500 rounded-lg text-slate-400"
+                      >
+                        <span className="material-symbols-outlined">delete</span>
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
