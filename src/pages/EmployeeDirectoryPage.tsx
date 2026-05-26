@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type EmployeeStatus = "Active" | "Inactive";
 
@@ -26,7 +26,7 @@ interface NewEmployeeForm {
   status: EmployeeStatus;
 }
 
-// ─── Seed Data ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Seed Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const DEPT_COLORS: Record<string, string> = {
   Engineering: "bg-blue-100 text-blue-700",
@@ -104,7 +104,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
 
 const STATUSES: EmployeeStatus[] = ["Active", "Inactive"];
 
-// ─── Add Employee Modal ───────────────────────────────────────────────────────
+// â”€â”€â”€ Add Employee Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const EMPTY_FORM: NewEmployeeForm = {
   name: "",
@@ -360,7 +360,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   );
 };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusBadge: React.FC<{ status: EmployeeStatus }> = ({ status }) =>
   status === "Active" ? (
@@ -438,17 +438,27 @@ const AnalyticsCards: React.FC<{ employees: DirectoryEmployee[] }> = ({
   );
 };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const EmployeeDirectoryPage: React.FC = () => {
-  const [employees, setEmployees] =
-    useState<DirectoryEmployee[]>(SEED_EMPLOYEES);
+  const [employees, setEmployees] = useState<DirectoryEmployee[]>(() => {
+    try {
+      const saved = localStorage.getItem("salarypro_employees");
+      return saved ? (JSON.parse(saved) as DirectoryEmployee[]) : SEED_EMPLOYEES;
+    } catch {
+      return SEED_EMPLOYEES;
+    }
+  });
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
 
   const handleAddEmployee = (emp: DirectoryEmployee) => {
-    setEmployees((prev) => [emp, ...prev]);
+    setEmployees((prev) => {
+      const next = [emp, ...prev];
+      localStorage.setItem("salarypro_employees", JSON.stringify(next));
+      return next;
+    });
   };
 
   const filtered = employees.filter((emp) => {
