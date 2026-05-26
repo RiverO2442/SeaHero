@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import type { Page } from "../App";
 
 interface NavItem {
@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "group", label: "Employee Directory", page: "employees" },
   { icon: "event_available", label: "Daily Entry", page: "daily-entry" },
   { icon: "payments", label: "Payroll", page: "payroll" },
+  { icon: "settings", label: "Settings", page: "settings" },
 ];
 
 interface SideNavProps {
