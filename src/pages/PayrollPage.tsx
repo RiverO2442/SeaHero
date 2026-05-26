@@ -336,10 +336,17 @@ const PayrollTable: React.FC<{
             Export CSV
           </button>
           <button
+            className="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+            onClick={() => {
+              const pendingIds = entries.filter((e) => e.status === "Pending").map((e) => e.id);
+              pendingIds.forEach((id) => onApprove(id));
+            }}
+          >
+            Approve All Pending
+          </button>
+          <button
             className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow-sm shadow-blue-200 hover:scale-[1.02] transition-transform"
-            onClick={() =>
-              alert("Releasing all approved payroll entries...")
-            }
+            onClick={() => entries.filter((e) => e.status === "Approved").forEach((e) => onRelease(e.id))}
           >
             Release All Approved
           </button>
