@@ -364,6 +364,93 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
 
 // â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+// ─── Edit Employee Modal ──────────────────────────────────────────────────────
+
+interface EditEmployeeModalProps {
+  employee: DirectoryEmployee;
+  onClose: () => void;
+  onSave: (emp: DirectoryEmployee) => void;
+}
+
+const EditEmployeeModal: React.FC<EditEmployeeModalProps> = ({ employee, onClose, onSave }) => {
+  const [form, setForm] = useState<NewEmployeeForm>({
+    name: employee.name,
+    email: employee.email,
+    department: employee.department,
+    role: employee.role,
+    dailyWage: String(employee.dailyWage),
+    status: employee.status,
+  });
+
+  const set = (field: keyof NewEmployeeForm, value: string) =>
+    setForm((f) => ({ ...f, [field]: value }));
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({
+      ...employee,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      department: form.department,
+      departmentColor: DEPT_COLORS[form.department] ?? "bg-slate-100 text-slate-700",
+      role: form.role.trim(),
+      dailyWage: Number(form.dailyWage),
+      status: form.status,
+    });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
+              <span className="material-symbols-outlined">edit</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-800">Edit Employee</h3>
+              <p className="text-xs text-slate-500">{employee.name}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {(["name", "email", "role"] as const).map((field) => (
+            <div key={field}>
+              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                {field === "role" ? "Job Role" : field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+              <input type={field === "email" ? "email" : "text"} value={form[field]} onChange={(e) => set(field, e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50" />
+            </div>
+          ))}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Department</label>
+              <select value={form.department} onChange={(e) => set("department", e.target.value)}
+                className="w-full appearance-none px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 bg-white">
+                {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Daily Wage ($)</label>
+              <input type="number" min="0" value={form.dailyWage} onChange={(e) => set("dailyWage", e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50" />
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+            <button type="submit" className="flex-1 py-2.5 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white text-sm font-bold shadow-md shadow-amber-200 hover:scale-[1.02] transition-transform">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const StatusBadge: React.FC<{ status: EmployeeStatus }> = ({ status }) =>
   status === "Active" ? (
     <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
@@ -455,7 +542,16 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
+  const [editEmployee, setEditEmployee] = useState<DirectoryEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const handleSaveEmployee = (emp: DirectoryEmployee) => {
+    setEmployees((prev) => {
+      const next = prev.map((e) => (e.id === emp.id ? emp : e));
+      localStorage.setItem("salarypro_employees", JSON.stringify(next));
+      return next;
+    });
+  };
   const [page, setPage] = useState(1);
   const [sortField, setSortField] = useState<"name" | "dailyWage" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
@@ -522,6 +618,14 @@ const EmployeeDirectoryPage: React.FC = () => {
         <AddEmployeeModal
           onClose={() => setShowModal(false)}
           onAdd={handleAddEmployee}
+        />
+      )}
+      {/* Edit Employee Modal */}
+      {editEmployee && (
+        <EditEmployeeModal
+          employee={editEmployee}
+          onClose={() => setEditEmployee(null)}
+          onSave={handleSaveEmployee}
         />
       )}
 
@@ -711,26 +815,18 @@ const EmployeeDirectoryPage: React.FC = () => {
                   <td className="px-6 py-4 text-right">
                     {deleteConfirm === emp.id ? (
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => handleDeleteEmployee(emp.id)}
-                          className="px-2.5 py-1 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm(null)}
-                          className="px-2.5 py-1 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-                        >
-                          Cancel
-                        </button>
+                        <button onClick={() => handleDeleteEmployee(emp.id)} className="px-2.5 py-1 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors">Confirm</button>
+                        <button onClick={() => setDeleteConfirm(null)} className="px-2.5 py-1 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => setDeleteConfirm(emp.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 hover:text-red-500 rounded-lg text-slate-400"
-                      >
-                        <span className="material-symbols-outlined">delete</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => setEditEmployee(emp)} className="p-2 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors">
+                          <span className="material-symbols-outlined">edit</span>
+                        </button>
+                        <button onClick={() => setDeleteConfirm(emp.id)} className="p-2 hover:bg-red-50 hover:text-red-500 rounded-lg text-slate-400 transition-colors">
+                          <span className="material-symbols-outlined">delete</span>
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
