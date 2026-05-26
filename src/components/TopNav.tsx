@@ -18,9 +18,11 @@ const NOTIFICATIONS = [
 
 interface TopNavProps {
   activePage: Page;
+  darkMode?: boolean;
+  onToggleDark?: () => void;
 }
 
-export const TopNav: React.FC<TopNavProps> = ({ activePage }) => {
+export const TopNav: React.FC<TopNavProps> = ({ activePage, darkMode, onToggleDark }) => {
   const [time, setTime] = useState(new Date());
   const [showNotifs, setShowNotifs] = useState(false);
   const [readAll, setReadAll] = useState(false);
@@ -102,6 +104,17 @@ export const TopNav: React.FC<TopNavProps> = ({ activePage }) => {
             </div>
           )}
         </div>
+
+        {/* Dark mode toggle */}
+        {onToggleDark && (
+          <button
+            onClick={onToggleDark}
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            className="text-slate-500 hover:text-blue-500 transition-colors"
+          >
+            <span className="material-symbols-outlined">{darkMode ? "light_mode" : "dark_mode"}</span>
+          </button>
+        )}
 
         <div className="h-8 w-px bg-slate-200" />
         <img
