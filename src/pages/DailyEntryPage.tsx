@@ -188,7 +188,7 @@ const DailyEntryPage: React.FC = () => {
       </section>
 
       {/* KPI cards */}
-      <KpiCards />
+      <KpiCards employees={employees} />
 
       {/* Attendance table */}
       <AttendanceTable
