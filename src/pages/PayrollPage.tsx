@@ -687,9 +687,12 @@ const PayrollHistory: React.FC = () => (
 
 const PERIODS = ["October 2026", "November 2026", "December 2026", "January 2027"];
 
+const PAYROLL_STATUSES: Array<PayrollStatus | "All"> = ["All", "Pending", "Approved", "On Hold", "Released"];
+
 const PayrollPage: React.FC = () => {
   const [entries, setEntries] = useState<PayrollEntry[]>(PAYROLL_ENTRIES);
   const [period, setPeriod] = useState("October 2026");
+  const [statusFilter, setStatusFilter] = useState<PayrollStatus | "All">("All");
 
   const handleApprove = (id: string) => {
     setEntries((prev) =>
@@ -744,9 +747,27 @@ const PayrollPage: React.FC = () => {
       {/* Summary KPI cards */}
       <SummaryCards entries={entries} />
 
+      {/* Status filter tabs */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {PAYROLL_STATUSES.map((s) => {
+          const counts: Record<string, number> = {};
+          PAYROLL_STATUSES.forEach((st) => { counts[st] = st === "All" ? entries.length : entries.filter((e) => e.status === st).length; });
+          const active = statusFilter === s;
+          return (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${active ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+            >
+              {s} <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${active ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>{counts[s]}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Payroll table */}
       <PayrollTable
-        entries={entries}
+        entries={statusFilter === "All" ? entries : entries.filter((e) => e.status === statusFilter)}
         onApprove={handleApprove}
         onHold={handleHold}
         onRelease={handleRelease}
