@@ -555,6 +555,7 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [sortField, setSortField] = useState<"name" | "dailyWage" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => { setPage(1); }, [search, deptFilter, statusFilter]);
 
@@ -576,6 +577,26 @@ const EmployeeDirectoryPage: React.FC = () => {
     });
     setDeleteConfirm(null);
   };
+
+  const handleBulkDelete = () => {
+    setEmployees((prev) => {
+      const next = prev.filter((e) => !selectedIds.has(e.id));
+      localStorage.setItem("salarypro_employees", JSON.stringify(next));
+      return next;
+    });
+    setSelectedIds(new Set());
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const allOnPageSelected = paginated.length > 0 && paginated.every((e) => selectedIds.has(e.id));
+  const someSelected = selectedIds.size > 0;
 
   const handleAddEmployee = (emp: DirectoryEmployee) => {
     setEmployees((prev) => {
@@ -721,11 +742,51 @@ const EmployeeDirectoryPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Bulk action bar */}
+      {someSelected && (
+        <div className="mb-4 px-4 py-3 bg-blue-600 text-white rounded-xl flex items-center gap-4 shadow-lg shadow-blue-200">
+          <span className="text-sm font-bold">{selectedIds.size} employee{selectedIds.size > 1 ? "s" : ""} selected</span>
+          <button
+            onClick={handleBulkDelete}
+            className="ml-auto px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">delete_sweep</span>
+            Delete Selected
+          </button>
+          <button onClick={() => setSelectedIds(new Set())} className="px-4 py-1.5 bg-white/20 hover:bg-white/30 text-xs font-bold rounded-lg transition-colors">
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-white rounded-xl overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50">
+              {/* Checkbox col */}
+              <th className="pl-6 pr-2 py-4 w-10">
+                <input
+                  type="checkbox"
+                  checked={allOnPageSelected}
+                  onChange={() => {
+                    if (allOnPageSelected) {
+                      setSelectedIds((prev) => {
+                        const next = new Set(prev);
+                        paginated.forEach((e) => next.delete(e.id));
+                        return next;
+                      });
+                    } else {
+                      setSelectedIds((prev) => {
+                        const next = new Set(prev);
+                        paginated.forEach((e) => next.add(e.id));
+                        return next;
+                      });
+                    }
+                  }}
+                  className="w-4 h-4 accent-blue-600 cursor-pointer"
+                />
+              </th>
               {(["Employee Name", "Department", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
                 const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : null;
                 const isActive = sortField === field;
@@ -752,7 +813,7 @@ const EmployeeDirectoryPage: React.FC = () => {
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-6 py-12 text-center text-slate-400 text-sm"
                 >
                   <span className="material-symbols-outlined text-3xl block mb-2">
@@ -765,8 +826,17 @@ const EmployeeDirectoryPage: React.FC = () => {
               paginated.map((emp) => (
                 <tr
                   key={emp.id}
-                  className="hover:bg-slate-50/60 transition-colors group"
+                  className={`hover:bg-slate-50/60 transition-colors group ${selectedIds.has(emp.id) ? "bg-blue-50/40" : ""}`}
                 >
+                  {/* Checkbox */}
+                  <td className="pl-6 pr-2 py-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(emp.id)}
+                      onChange={() => toggleSelect(emp.id)}
+                      className="w-4 h-4 accent-blue-600 cursor-pointer"
+                    />
+                  </td>
                   {/* Employee */}
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
