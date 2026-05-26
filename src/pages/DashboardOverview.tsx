@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -350,7 +350,15 @@ interface DashboardOverviewProps {
   onNavigate: (page: import("../App").Page) => void;
 }
 
-export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate }) => (
+export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate }) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1200);
+  };
+
+  return (
   <div className="space-y-10">
     {/* Page header */}
     <section className="flex justify-between items-end">
@@ -363,6 +371,13 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         </p>
       </div>
       <div className="flex gap-3">
+        <button
+          onClick={handleRefresh}
+          className="px-4 py-2.5 bg-slate-100 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2"
+        >
+          <span className={`material-symbols-outlined text-base ${refreshing ? "animate-spin" : ""}`}>refresh</span>
+          {refreshing ? "Refreshing…" : "Refresh"}
+        </button>
         <button className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
           Export Report
         </button>
@@ -393,4 +408,5 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
       </div>
     </section>
   </div>
-);
+  );
+};
