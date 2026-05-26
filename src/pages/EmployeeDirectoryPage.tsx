@@ -1,4 +1,6 @@
-﻿import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
+
+const PER_PAGE = 5;
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -454,6 +456,9 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [search, deptFilter, statusFilter]);
 
   const handleDeleteEmployee = (id: string) => {
     setEmployees((prev) => {
@@ -485,6 +490,9 @@ const EmployeeDirectoryPage: React.FC = () => {
       statusFilter === "All Statuses" || emp.status === statusFilter;
     return searchMatch && deptMatch && statusMatch;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <>
@@ -619,7 +627,7 @@ const EmployeeDirectoryPage: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              filtered.map((emp) => (
+              paginated.map((emp) => (
                 <tr
                   key={emp.id}
                   className="hover:bg-slate-50/60 transition-colors group"
@@ -708,19 +716,30 @@ const EmployeeDirectoryPage: React.FC = () => {
         {/* Pagination footer */}
         <div className="px-6 py-4 bg-slate-50/30 flex justify-between items-center border-t border-slate-100">
           <p className="text-xs font-medium text-slate-500 italic">
-            Showing {filtered.length} of {employees.length} employees
+            Showing {Math.min((page - 1) * PER_PAGE + 1, filtered.length)}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} employees
           </p>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-1 items-center">
             <button
-              disabled
-              className="px-3 py-1 text-sm font-bold text-slate-400 disabled:opacity-30"
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="px-3 py-1 text-sm font-bold text-slate-600 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
-            <button className="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold">
-              1
-            </button>
-            <button className="px-3 py-1 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${p === page ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="px-3 py-1 text-sm font-bold text-slate-600 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
               Next
             </button>
           </div>
