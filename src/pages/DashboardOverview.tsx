@@ -279,6 +279,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
     {
       icon: "person_add",
       label: "New Hire",
+      tooltip: "Add a new employee to the directory and set up their payroll profile.",
       bg: "bg-blue-50",
       border: "border-blue-100",
       color: "text-blue-600",
@@ -288,6 +289,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
     {
       icon: "history",
       label: "Audit Logs",
+      tooltip: "Review a full history of payroll actions and system events.",
       bg: "bg-purple-50",
       border: "border-purple-100",
       color: "text-purple-600",
@@ -297,6 +299,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
     {
       icon: "ios_share",
       label: "Bulk Payout",
+      tooltip: "Approve and release payroll for all eligible employees at once.",
       bg: "bg-slate-50",
       border: "border-slate-200",
       color: "text-slate-600",
@@ -308,16 +311,22 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
   return (
     <div className="grid grid-cols-3 gap-6">
       {actions.map((a) => (
-        <button
-          key={a.label}
-          onClick={a.onClick}
-          className={`${a.bg} p-6 rounded-xl border ${a.border} flex flex-col items-center text-center cursor-pointer ${a.hover} transition-colors`}
-        >
-          <span className={`material-symbols-outlined ${a.color} mb-2 text-3xl`}>
-            {a.icon}
-          </span>
-          <span className="text-xs font-bold text-slate-800">{a.label}</span>
-        </button>
+        <div key={a.label} className="relative group/qa">
+          <button
+            onClick={a.onClick}
+            className={`w-full ${a.bg} p-6 rounded-xl border ${a.border} flex flex-col items-center text-center cursor-pointer ${a.hover} transition-colors`}
+          >
+            <span className={`material-symbols-outlined ${a.color} mb-2 text-3xl`}>
+              {a.icon}
+            </span>
+            <span className="text-xs font-bold text-slate-800">{a.label}</span>
+          </button>
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg shadow-xl opacity-0 group-hover/qa:opacity-100 transition-opacity pointer-events-none z-10 text-center leading-relaxed">
+            {a.tooltip}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+          </div>
+        </div>
       ))}
     </div>
   );
