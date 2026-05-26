@@ -310,6 +310,88 @@ const exportPayrollCSV = (entries: PayrollEntry[]) => {
   URL.revokeObjectURL(url);
 };
 
+// ─── Send Payslip Modal ──────────────────────────────────────────────────────
+
+const SendPayslipModal: React.FC<{ entry: PayrollEntry; onClose: () => void }> = ({ entry, onClose }) => {
+  const [email, setEmail] = useState(entry.name.toLowerCase().replace(" ", ".") + "@salarypro.com");
+  const [sent, setSent] = useState(false);
+
+  const handleSend = () => {
+    setSent(true);
+    setTimeout(onClose, 1800);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800">Send Payslip</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div className="px-6 py-5 space-y-4">
+          {/* Employee info */}
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+            {entry.avatarUrl ? (
+              <img src={entry.avatarUrl} alt={entry.name} className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">{entry.initials}</div>
+            )}
+            <div>
+              <p className="text-sm font-bold text-slate-800">{entry.name}</p>
+              <p className="text-xs text-slate-500">{entry.role} · {entry.department}</p>
+            </div>
+            <div className="ml-auto text-right">
+              <p className="text-xs text-slate-400">Net Pay</p>
+              <p className="font-extrabold text-blue-600">{fmt(entry.netPay)}</p>
+            </div>
+          </div>
+          {/* Summary */}
+          <div className="grid grid-cols-3 gap-3 text-center">
+            {[
+              { label: "Gross", value: fmt(entry.grossPay), color: "text-slate-800" },
+              { label: "Tax", value: `-${fmt(entry.grossPay * entry.taxRate)}`, color: "text-red-500" },
+              { label: "Deductions", value: `-${fmt(entry.deductions)}`, color: "text-amber-600" },
+            ].map((item) => (
+              <div key={item.label} className="bg-slate-50 rounded-lg p-2">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.label}</p>
+                <p className={`text-sm font-bold ${item.color}`}>{item.value}</p>
+              </div>
+            ))}
+          </div>
+          {/* Email input */}
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Recipient Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+            />
+          </div>
+        </div>
+        <div className="px-6 pb-6 flex gap-3">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 bg-slate-100 text-slate-800 text-sm font-bold rounded-xl hover:bg-slate-200 transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={handleSend}
+            disabled={sent}
+            className="flex-1 px-4 py-2.5 bg-gradient-to-br from-blue-600 to-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 hover:scale-[1.02] transition-all disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
+          >
+            {sent ? (
+              <><span className="material-symbols-outlined text-sm">check_circle</span> Sent!</>
+            ) : (
+              <><span className="material-symbols-outlined text-sm">send</span> Send Payslip</>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PayrollTable: React.FC<{
   entries: PayrollEntry[];
   onApprove: (id: string) => void;
@@ -317,8 +399,11 @@ const PayrollTable: React.FC<{
   onRelease: (id: string) => void;
 }> = ({ entries, onApprove, onHold, onRelease }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [payslipEntry, setPayslipEntry] = useState<PayrollEntry | null>(null);
 
   return (
+    <>
+    {payslipEntry && <SendPayslipModal entry={payslipEntry} onClose={() => setPayslipEntry(null)} />}
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Table header */}
       <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -504,6 +589,13 @@ const PayrollTable: React.FC<{
                         Paid
                       </span>
                     )}
+                    <button
+                      onClick={() => setPayslipEntry(entry)}
+                      title="Send payslip"
+                      className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">send</span>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -595,6 +687,7 @@ const PayrollTable: React.FC<{
         </tfoot>
       </table>
     </div>
+    </>
   );
 };
 
