@@ -7,6 +7,7 @@ interface AttendanceTableProps {
   onStatusChange: (id: string, status: AttendanceStatus) => void;
   onHoursChange: (id: string, hours: number) => void;
   onMarkAllPresent: () => void;
+  onMarkAllAbsent: () => void;
   onDraftSave: () => void;
   onCommit: () => void;
 }
@@ -16,6 +17,7 @@ export const AttendanceTable: React.FC<AttendanceTableProps> = ({
   onStatusChange,
   onHoursChange,
   onMarkAllPresent,
+  onMarkAllAbsent,
   onDraftSave,
   onCommit,
 }) => (
@@ -29,6 +31,13 @@ export const AttendanceTable: React.FC<AttendanceTableProps> = ({
         >
           <span className="material-symbols-outlined text-sm">done_all</span>
           Mark All Present
+        </button>
+        <button
+          onClick={onMarkAllAbsent}
+          className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-red-100 transition-colors"
+        >
+          <span className="material-symbols-outlined text-sm">person_off</span>
+          Mark All Absent
         </button>
         <button className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-300 transition-colors">
           <span className="material-symbols-outlined text-sm">filter_list</span>

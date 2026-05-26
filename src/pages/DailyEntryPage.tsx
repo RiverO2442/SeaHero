@@ -143,6 +143,16 @@ const DailyEntryPage: React.FC = () => {
     );
   };
 
+  const handleMarkAllAbsent = () => {
+    setEmployees((prev) =>
+      prev.map((emp) => ({
+        ...emp,
+        status: "Absent" as AttendanceStatus,
+        hoursWorked: 0,
+      })),
+    );
+  };
+
   const handleDraftSave = () => {
     const key = `attendance_draft_${currentDate.toISOString().slice(0, 10)}`;
     localStorage.setItem(key, JSON.stringify(employees));
@@ -196,6 +206,7 @@ const DailyEntryPage: React.FC = () => {
         onStatusChange={handleStatusChange}
         onHoursChange={handleHoursChange}
         onMarkAllPresent={handleMarkAllPresent}
+        onMarkAllAbsent={handleMarkAllAbsent}
         onDraftSave={handleDraftSave}
         onCommit={handleCommit}
       />
