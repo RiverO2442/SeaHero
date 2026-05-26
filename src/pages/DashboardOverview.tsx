@@ -1,4 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
+// ─── Count-up hook ────────────────────────────────────────────────────────────
+
+function parseMetricValue(raw: string): { prefix: string; target: number } {
+  const prefix = raw.startsWith("$") ? "$" : "";
+  const digits = parseFloat(raw.replace(/[$,]/g, ""));
+  return { prefix, target: isNaN(digits) ? 0 : digits };
+}
+
+function formatMetricNumber(n: number, original: string): string {
+  const isInt = !original.includes(".") && Number.isInteger(parseFloat(original.replace(/[$,]/g, "")));
+  const formatted = isInt
+    ? Math.round(n).toLocaleString("en-US")
+    : n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return original.startsWith("$") ? `$${formatted}` : formatted;
+}
+
+const AnimatedValue: React.FC<{ value: string }> = ({ value }) => {
+  const { prefix, target } = parseMetricValue(value);
+  const [display, setDisplay] = useState(prefix + "0");
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const duration = 900;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = eased * target;
+      setDisplay(formatMetricNumber(current, value));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [value, target]);
+
+  return <>{display}</>;
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -143,9 +183,9 @@ const MetricCards: React.FC = () => (
           {card.label}
         </p>
         <h3
-          className={`font-extrabold text-2xl mt-1 ${card.valueColor ?? "text-slate-800"}`}
+          className={`font-extrabold text-2xl mt-1 tabular-nums ${card.valueColor ?? "text-slate-800"}`}
         >
-          {card.value}
+          <AnimatedValue value={card.value} />
         </h3>
       </div>
     ))}
