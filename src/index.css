@@ -1,4 +1,12 @@
 @import "tailwindcss";
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeSlideIn {
+  animation: fadeSlideIn 0.25s ease-out both;
+}
 :root {
   --text: #6b6375;
   --text-h: #08060d;
