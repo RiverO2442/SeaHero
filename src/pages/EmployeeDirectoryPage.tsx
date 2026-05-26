@@ -882,8 +882,8 @@ const EmployeeDirectoryPage: React.FC = () => {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                          {emp.initials}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${emp.departmentColor}`}>
+                          {emp.initials ?? emp.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
                       )}
                       <div>
