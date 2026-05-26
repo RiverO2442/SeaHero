@@ -61,7 +61,12 @@ function App() {
     return () => clearTimeout(t);
   }, []);
 
-  const navigate = (p: Page) => { setActivePage(p); setPageKey((k) => k + 1); };
+  const navigate = (p: Page) => {
+    setActivePage(p);
+    setPageKey((k) => k + 1);
+    // Scroll main content area back to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen w-full">
