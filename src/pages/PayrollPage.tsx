@@ -293,6 +293,23 @@ const StatusBadge: React.FC<{ status: PayrollStatus }> = ({ status }) => (
   </span>
 );
 
+const exportPayrollCSV = (entries: PayrollEntry[]) => {
+  const headers = ["Name", "Department", "Role", "Days Worked", "Daily Rate", "Overtime (h)", "Gross Pay", "Tax Rate", "Tax Withheld", "Net Pay", "Status"];
+  const rows = entries.map((e) => [
+    e.name, e.department, e.role, e.daysWorked, e.dailyRate, e.overtime,
+    e.grossPay.toFixed(2), `${(e.taxRate * 100).toFixed(0)}%`,
+    (e.grossPay * e.taxRate).toFixed(2), e.netPay.toFixed(2), e.status,
+  ]);
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `payroll_oct2026.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 const PayrollTable: React.FC<{
   entries: PayrollEntry[];
   onApprove: (id: string) => void;
@@ -314,7 +331,7 @@ const PayrollTable: React.FC<{
         <div className="flex gap-2">
           <button
             className="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-            onClick={() => alert("Exporting CSV...")}
+            onClick={() => exportPayrollCSV(entries)}
           >
             Export CSV
           </button>
