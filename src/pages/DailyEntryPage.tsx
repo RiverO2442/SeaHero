@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { KpiCards } from "../components/KpiCards";
 import { AttendanceTable } from "../components/AttendanceTable";
 import {
@@ -12,7 +12,7 @@ import type {
   DepartmentStat,
 } from "../components/types";
 
-// ─── Seed Data ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Seed Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const INITIAL_EMPLOYEES: Employee[] = [
   {
@@ -65,7 +65,7 @@ const ADJUSTMENTS: Adjustment[] = [
     id: "1",
     type: "overtime",
     title: "Overtime Approved: Sasha Ho",
-    detail: "Marketing • Added 2.5 hours for Campaign Launch",
+    detail: "Marketing â€¢ Added 2.5 hours for Campaign Launch",
     time: "14:20 PM",
   },
   {
@@ -83,11 +83,29 @@ const DEPARTMENT_STATS: DepartmentStat[] = [
   { name: "Others", percentage: 10, colorClass: "bg-slate-300" },
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const DailyEntryPage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
-  const [currentDate] = useState(new Date("2023-10-24"));
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const handlePrevDay = () => {
+    setCurrentDate((d) => {
+      const prev = new Date(d);
+      prev.setDate(prev.getDate() - 1);
+      return prev;
+    });
+  };
+
+  const handleNextDay = () => {
+    setCurrentDate((d) => {
+      const next = new Date(d);
+      next.setDate(next.getDate() + 1);
+      return next;
+    });
+  };
+
+  const isToday = currentDate.toDateString() === new Date().toDateString();
 
   const formattedDate = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -150,7 +168,7 @@ const DailyEntryPage: React.FC = () => {
 
         {/* Date picker */}
         <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-[0_10px_40px_rgba(42,52,57,0.06)]">
-          <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+          <button onClick={handlePrevDay} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
           <div className="flex items-center gap-2 px-4 py-1">
@@ -159,7 +177,7 @@ const DailyEntryPage: React.FC = () => {
             </span>
             <span className="font-bold text-slate-800">{formattedDate}</span>
           </div>
-          <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400">
+          <button onClick={handleNextDay} disabled={isToday} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed">
             <span className="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
