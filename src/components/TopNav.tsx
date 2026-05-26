@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
+import type { Page } from "../App";
 
-export const TopNav: React.FC = () => {
+const PAGE_TITLES: Record<Page, string> = {
+  dashboard: "Dashboard Overview",
+  "daily-entry": "Daily Attendance",
+  employees: "Employee Directory",
+  payroll: "Payroll Management",
+  settings: "Settings",
+};
+
+interface TopNavProps {
+  activePage: Page;
+}
+
+export const TopNav: React.FC<TopNavProps> = ({ activePage }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -16,14 +29,9 @@ export const TopNav: React.FC = () => {
 
   return (
     <header className="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/80 backdrop-blur-md flex justify-between items-center px-8 z-40 shadow-sm">
-      {/* Search */}
-      <div className="flex items-center bg-slate-50 rounded-full px-4 py-1.5 w-80">
-        <span className="material-symbols-outlined text-slate-400 text-sm mr-2">search</span>
-        <input
-          type="text"
-          placeholder="Search employees..."
-          className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400 outline-none"
-        />
+      {/* Page title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-lg font-bold text-slate-800">{PAGE_TITLES[activePage]}</h1>
       </div>
 
       {/* Actions */}
@@ -39,9 +47,6 @@ export const TopNav: React.FC = () => {
         <button className="text-slate-500 hover:text-blue-500 transition-colors relative">
           <span className="material-symbols-outlined">notifications</span>
           <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-        </button>
-        <button className="text-slate-500 hover:text-blue-500 transition-colors">
-          <span className="material-symbols-outlined">settings</span>
         </button>
         <div className="h-8 w-px bg-slate-200" />
         <img

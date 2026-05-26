@@ -15,7 +15,7 @@ function App() {
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen w-full">
       <SideNav activePage={activePage} onNavigate={setActivePage} />
-      <TopNav />
+      <TopNav activePage={activePage} />
 
       <main className="ml-64 pt-24 px-10 pb-12 min-h-screen">
         {activePage === "dashboard" && <DashboardOverview />}
