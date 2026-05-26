@@ -1,4 +1,5 @@
 ﻿import React, { useState } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 interface ToggleProps {
   checked: boolean;
@@ -42,15 +43,15 @@ const Section: React.FC<{ icon: string; title: string; subtitle: string; childre
 );
 
 const SettingsPage: React.FC = () => {
-  const [name, setName] = useState("Alex Thompson");
-  const [email, setEmail] = useState("alex.t@salarypro.com");
-  const [timezone, setTimezone] = useState("UTC+7 â€” Ho Chi Minh City");
-  const [taxRate, setTaxRate] = useState("15");
-  const [payCycle, setPayCycle] = useState("Monthly");
-  const [emailNotifs, setEmailNotifs] = useState(true);
-  const [payrollAlerts, setPayrollAlerts] = useState(true);
-  const [systemAlerts, setSystemAlerts] = useState(false);
-  const [weeklyReport, setWeeklyReport] = useState(true);
+  const [name, setName] = useLocalStorage(“settings_name”, “Alex Thompson”);
+  const [email, setEmail] = useLocalStorage(“settings_email”, “alex.t@salarypro.com”);
+  const [timezone, setTimezone] = useLocalStorage(“settings_timezone”, “UTC+7 — Ho Chi Minh City”);
+  const [taxRate, setTaxRate] = useLocalStorage(“settings_taxRate”, “15”);
+  const [payCycle, setPayCycle] = useLocalStorage(“settings_payCycle”, “Monthly”);
+  const [emailNotifs, setEmailNotifs] = useLocalStorage(“settings_emailNotifs”, true);
+  const [payrollAlerts, setPayrollAlerts] = useLocalStorage(“settings_payrollAlerts”, true);
+  const [systemAlerts, setSystemAlerts] = useLocalStorage(“settings_systemAlerts”, false);
+  const [weeklyReport, setWeeklyReport] = useLocalStorage(“settings_weeklyReport”, true);
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
