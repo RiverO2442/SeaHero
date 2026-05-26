@@ -14,6 +14,13 @@ const STATUS_OPTIONS: AttendanceStatus[] = [
   "On Leave",
 ];
 
+const ROW_BG: Record<AttendanceStatus, string> = {
+  Present: "hover:bg-emerald-50/60",
+  "Half-day": "bg-amber-50/20 hover:bg-amber-50/50",
+  Absent: "bg-red-50/30 hover:bg-red-50/60",
+  "On Leave": "bg-slate-50/60 hover:bg-slate-100/60",
+};
+
 export const AttendanceRow: React.FC<AttendanceRowProps> = ({
   employee,
   onStatusChange,
@@ -27,7 +34,7 @@ export const AttendanceRow: React.FC<AttendanceRowProps> = ({
     : "bg-white border border-slate-200 text-sm font-medium rounded-lg px-3 py-1.5 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all";
 
   return (
-    <tr className="group hover:bg-slate-50 transition-colors">
+    <tr className={`group transition-colors ${ROW_BG[employee.status]}`}>
       {/* Employee */}
       <td className="px-8 py-5">
         <div className="flex items-center gap-3">
