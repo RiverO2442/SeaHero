@@ -144,13 +144,17 @@ const DailyEntryPage: React.FC = () => {
   };
 
   const handleDraftSave = () => {
-    console.log("Draft saved:", employees);
-    alert("Draft saved successfully.");
+    const key = `attendance_draft_${currentDate.toISOString().slice(0, 10)}`;
+    localStorage.setItem(key, JSON.stringify(employees));
+    console.log("Draft saved to localStorage:", key);
   };
 
   const handleCommit = () => {
-    console.log("Entries committed:", employees);
-    alert("Entries committed successfully.");
+    const key = `attendance_committed_${currentDate.toISOString().slice(0, 10)}`;
+    localStorage.setItem(key, JSON.stringify(employees));
+    const draftKey = `attendance_draft_${currentDate.toISOString().slice(0, 10)}`;
+    localStorage.removeItem(draftKey);
+    console.log("Entries committed:", key);
   };
 
   return (
