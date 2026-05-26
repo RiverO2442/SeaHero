@@ -200,6 +200,22 @@ const DailyEntryPage: React.FC = () => {
       {/* KPI cards */}
       <KpiCards employees={employees} />
 
+      {/* Status legend */}
+      <div className="flex flex-wrap gap-2 -mt-2 mb-2">
+        {([
+          { label: "Present", bg: "bg-emerald-100", text: "text-emerald-700", dot: "bg-emerald-500" },
+          { label: "Half-day", bg: "bg-amber-100", text: "text-amber-700", dot: "bg-amber-400" },
+          { label: "Absent", bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" },
+          { label: "On Leave", bg: "bg-purple-100", text: "text-purple-700", dot: "bg-purple-500" },
+        ] as const).map(({ label, bg, text, dot }) => (
+          <span key={label} className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${bg} ${text}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+            {label}
+          </span>
+        ))}
+        <span className="text-xs text-slate-400 self-center ml-1">— Row colours match status</span>
+      </div>
+
       {/* Attendance table */}
       <AttendanceTable
         employees={employees}
