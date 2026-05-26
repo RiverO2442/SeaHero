@@ -77,6 +77,22 @@ export const AttendanceTable: React.FC<AttendanceTableProps> = ({
       </table>
     </div>
 
+    {/* Totals row */}
+    <div className="px-8 py-4 bg-slate-50 border-t border-slate-200 grid grid-cols-3 gap-4 text-sm">
+      <div>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Present</span>
+        <p className="font-bold text-emerald-600 mt-0.5">{employees.filter((e) => e.status === "Present" || e.status === "Half-day").length}</p>
+      </div>
+      <div>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Absent / Leave</span>
+        <p className="font-bold text-red-500 mt-0.5">{employees.filter((e) => e.status === "Absent" || e.status === "On Leave").length}</p>
+      </div>
+      <div>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Payout</span>
+        <p className="font-bold text-blue-600 mt-0.5">${employees.reduce((s, e) => s + (e.status === "Absent" ? 0 : e.hoursWorked * e.dailyRate), 0).toFixed(2)}</p>
+      </div>
+    </div>
+
     {/* Footer */}
     <div className="px-8 py-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/10">
       <p className="text-sm text-slate-500">
