@@ -669,6 +669,11 @@ const EmployeeDirectoryPage: React.FC = () => {
         <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
           <span className="material-symbols-outlined text-lg">filter_list</span>
           Filters:
+          {(search || deptFilter !== "All Departments" || statusFilter !== "All Statuses") && (
+            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-blue-600 text-white rounded-full">
+              {[search, deptFilter !== "All Departments", statusFilter !== "All Statuses"].filter(Boolean).length}
+            </span>
+          )}
         </div>
 
         {/* Department filter */}
