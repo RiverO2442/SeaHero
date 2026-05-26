@@ -457,8 +457,20 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [sortField, setSortField] = useState<"name" | "dailyWage" | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => { setPage(1); }, [search, deptFilter, statusFilter]);
+
+  const toggleSort = (field: "name" | "dailyWage") => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+    setPage(1);
+  };
 
   const handleDeleteEmployee = (id: string) => {
     setEmployees((prev) => {
@@ -491,8 +503,17 @@ const EmployeeDirectoryPage: React.FC = () => {
     return searchMatch && deptMatch && statusMatch;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const sorted = sortField
+    ? [...filtered].sort((a, b) => {
+        const v = sortField === "name"
+          ? a.name.localeCompare(b.name)
+          : a.dailyWage - b.dailyWage;
+        return sortDir === "asc" ? v : -v;
+      })
+    : filtered;
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PER_PAGE));
+  const paginated = sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <>
@@ -596,21 +617,26 @@ const EmployeeDirectoryPage: React.FC = () => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50">
-              {[
-                "Employee Name",
-                "Department",
-                "Role",
-                "Daily Wage",
-                "Status",
-                "",
-              ].map((col) => (
-                <th
-                  key={col}
-                  className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-                >
-                  {col}
-                </th>
-              ))}
+              {(["Employee Name", "Department", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
+                const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : null;
+                const isActive = sortField === field;
+                return (
+                  <th
+                    key={col}
+                    onClick={field ? () => toggleSort(field) : undefined}
+                    className={`px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider ${field ? "cursor-pointer hover:text-blue-600 select-none" : ""} ${isActive ? "text-blue-600" : ""}`}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {col}
+                      {field && (
+                        <span className="material-symbols-outlined text-xs">
+                          {isActive ? (sortDir === "asc" ? "arrow_upward" : "arrow_downward") : "unfold_more"}
+                        </span>
+                      )}
+                    </span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -716,7 +742,7 @@ const EmployeeDirectoryPage: React.FC = () => {
         {/* Pagination footer */}
         <div className="px-6 py-4 bg-slate-50/30 flex justify-between items-center border-t border-slate-100">
           <p className="text-xs font-medium text-slate-500 italic">
-            Showing {Math.min((page - 1) * PER_PAGE + 1, filtered.length)}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} employees
+            Showing {Math.min((page - 1) * PER_PAGE + 1, sorted.length)}–{Math.min(page * PER_PAGE, sorted.length)} of {sorted.length} employees
           </p>
           <div className="flex gap-1 items-center">
             <button
