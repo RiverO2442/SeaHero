@@ -740,41 +740,76 @@ const DeptBreakdown: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
   );
 };
 
-const PayrollHistory: React.FC = () => (
-  <div className="bg-white p-6 rounded-xl shadow-sm">
-    <h4 className="font-bold text-slate-800 mb-1">Payroll History</h4>
-    <p className="text-xs text-slate-500 mb-6">Last 3 completed cycles</p>
-    <div className="space-y-4">
-      {PAYROLL_HISTORY.map((run) => (
-        <div
-          key={run.id}
-          className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
-              <span className="material-symbols-outlined">receipt_long</span>
+const HISTORY_DETAILS: Record<string, { avgNet: string; topDept: string; onTime: string }> = {
+  h1: { avgNet: "$3,820", topDept: "Engineering", onTime: "98%" },
+  h2: { avgNet: "$3,670", topDept: "Engineering", onTime: "100%" },
+  h3: { avgNet: "$3,610", topDept: "Product Design", onTime: "97%" },
+};
+
+const PayrollHistory: React.FC = () => {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm">
+      <h4 className="font-bold text-slate-800 mb-1">Payroll History</h4>
+      <p className="text-xs text-slate-500 mb-6">Last 3 completed cycles — click to expand</p>
+      <div className="space-y-3">
+        {PAYROLL_HISTORY.map((run) => {
+          const isOpen = expandedId === run.id;
+          const detail = HISTORY_DETAILS[run.id];
+          return (
+            <div key={run.id} className="rounded-xl overflow-hidden border border-slate-100">
+              <button
+                onClick={() => setExpandedId(isOpen ? null : run.id)}
+                className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <span className="material-symbols-outlined">receipt_long</span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-slate-800">{run.period}</p>
+                    <p className="text-xs text-slate-500">
+                      Released {run.releasedDate} · {run.employees} employees
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="font-extrabold text-slate-800">{run.totalAmount}</p>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      {run.status}
+                    </span>
+                  </div>
+                  <span className={`material-symbols-outlined text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}>
+                    expand_more
+                  </span>
+                </div>
+              </button>
+              {isOpen && detail && (
+                <div className="px-4 py-3 bg-white grid grid-cols-3 gap-4 border-t border-slate-100">
+                  {[
+                    { label: "Avg Net Pay", value: detail.avgNet, color: "text-blue-600" },
+                    { label: "Top Dept", value: detail.topDept, color: "text-purple-600" },
+                    { label: "On-Time Rate", value: detail.onTime, color: "text-emerald-600" },
+                  ].map((item) => (
+                    <div key={item.label} className="text-center">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.label}</p>
+                      <p className={`text-sm font-extrabold ${item.color} mt-0.5`}>{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div>
-              <p className="text-sm font-bold text-slate-800">{run.period}</p>
-              <p className="text-xs text-slate-500">
-                Released {run.releasedDate} · {run.employees} employees
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="font-extrabold text-slate-800">{run.totalAmount}</p>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              {run.status}
-            </span>
-          </div>
-        </div>
-      ))}
+          );
+        })}
+      </div>
+      <button className="w-full mt-4 py-2 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+        View Full History
+      </button>
     </div>
-    <button className="w-full mt-4 py-2 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-      View Full History
-    </button>
-  </div>
-);
+  );
+};
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
