@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 
 const PER_PAGE = 5;
 
@@ -556,8 +556,20 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [sortField, setSortField] = useState<"name" | "dailyWage" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setPage(1); }, [search, deptFilter, statusFilter]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
 
   const toggleSort = (field: "name" | "dailyWage") => {
     if (sortField === field) {
@@ -675,10 +687,11 @@ const EmployeeDirectoryPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
           <input
+            ref={searchInputRef}
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email or role..."
+            placeholder='Search name, email or role… (press "/" to focus)'
             className="w-full pl-9 pr-8 py-2 bg-white rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 border-none"
           />
           {search && (
