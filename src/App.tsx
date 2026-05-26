@@ -18,7 +18,7 @@ function App() {
       <TopNav activePage={activePage} />
 
       <main className="ml-64 pt-24 px-10 pb-12 min-h-screen">
-        {activePage === "dashboard" && <DashboardOverview />}
+        {activePage === "dashboard" && <DashboardOverview onNavigate={setActivePage} />}
         {activePage === "daily-entry" && <DailyEntryPage />}
         {activePage === "employees" && <EmployeeDirectoryPage />}
         {activePage === "payroll" && <PayrollPage />}

@@ -230,7 +230,11 @@ const PayoutTrendsChart: React.FC = () => (
   </div>
 );
 
-const QuickActions: React.FC = () => {
+interface QuickActionsProps {
+  onNavigate: (page: import("../App").Page) => void;
+}
+
+const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
   const actions = [
     {
       icon: "person_add",
@@ -239,6 +243,7 @@ const QuickActions: React.FC = () => {
       border: "border-blue-100",
       color: "text-blue-600",
       hover: "hover:bg-blue-100",
+      onClick: () => onNavigate("employees"),
     },
     {
       icon: "history",
@@ -247,6 +252,7 @@ const QuickActions: React.FC = () => {
       border: "border-purple-100",
       color: "text-purple-600",
       hover: "hover:bg-purple-100",
+      onClick: () => {},
     },
     {
       icon: "ios_share",
@@ -255,6 +261,7 @@ const QuickActions: React.FC = () => {
       border: "border-slate-200",
       color: "text-slate-600",
       hover: "hover:bg-slate-100",
+      onClick: () => onNavigate("payroll"),
     },
   ];
 
@@ -263,11 +270,10 @@ const QuickActions: React.FC = () => {
       {actions.map((a) => (
         <button
           key={a.label}
+          onClick={a.onClick}
           className={`${a.bg} p-6 rounded-xl border ${a.border} flex flex-col items-center text-center cursor-pointer ${a.hover} transition-colors`}
         >
-          <span
-            className={`material-symbols-outlined ${a.color} mb-2 text-3xl`}
-          >
+          <span className={`material-symbols-outlined ${a.color} mb-2 text-3xl`}>
             {a.icon}
           </span>
           <span className="text-xs font-bold text-slate-800">{a.label}</span>
@@ -340,7 +346,11 @@ const PromoCard: React.FC = () => (
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
 
-export const DashboardOverview: React.FC = () => (
+interface DashboardOverviewProps {
+  onNavigate: (page: import("../App").Page) => void;
+}
+
+export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate }) => (
   <div className="space-y-10">
     {/* Page header */}
     <section className="flex justify-between items-end">
@@ -356,7 +366,10 @@ export const DashboardOverview: React.FC = () => (
         <button className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
           Export Report
         </button>
-        <button className="px-5 py-2.5 bg-linear-to-br from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-blue-200 hover:scale-[1.02] transition-transform">
+        <button
+          onClick={() => onNavigate("payroll")}
+          className="px-5 py-2.5 bg-gradient-to-br from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-blue-200 hover:scale-[1.02] transition-transform"
+        >
           Run New Payroll
         </button>
       </div>
@@ -370,7 +383,7 @@ export const DashboardOverview: React.FC = () => (
       {/* Left: chart + quick actions */}
       <div className="lg:col-span-2 space-y-6">
         <PayoutTrendsChart />
-        <QuickActions />
+        <QuickActions onNavigate={onNavigate} />
       </div>
 
       {/* Right: activity feed + promo */}
