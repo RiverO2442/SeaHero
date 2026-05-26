@@ -678,8 +678,11 @@ const PayrollHistory: React.FC = () => (
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
+const PERIODS = ["October 2026", "November 2026", "December 2026", "January 2027"];
+
 const PayrollPage: React.FC = () => {
   const [entries, setEntries] = useState<PayrollEntry[]>(PAYROLL_ENTRIES);
+  const [period, setPeriod] = useState("October 2026");
 
   const handleApprove = (id: string) => {
     setEntries((prev) =>
@@ -712,6 +715,16 @@ const PayrollPage: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-3">
+          <div className="relative">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 text-slate-800 text-sm font-semibold rounded-lg outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+            >
+              {PERIODS.map((p) => <option key={p}>{p}</option>)}
+            </select>
+            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-sm">expand_more</span>
+          </div>
           <button className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
             Export Report
           </button>
