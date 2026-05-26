@@ -449,6 +449,7 @@ const EmployeeDirectoryPage: React.FC = () => {
       return SEED_EMPLOYEES;
     }
   });
+  const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
@@ -462,11 +463,17 @@ const EmployeeDirectoryPage: React.FC = () => {
   };
 
   const filtered = employees.filter((emp) => {
+    const q = search.toLowerCase();
+    const searchMatch =
+      !q ||
+      emp.name.toLowerCase().includes(q) ||
+      emp.email.toLowerCase().includes(q) ||
+      emp.role.toLowerCase().includes(q);
     const deptMatch =
       deptFilter === "All Departments" || emp.department === deptFilter;
     const statusMatch =
       statusFilter === "All Statuses" || emp.status === statusFilter;
-    return deptMatch && statusMatch;
+    return searchMatch && deptMatch && statusMatch;
   });
 
   return (
@@ -500,6 +507,22 @@ const EmployeeDirectoryPage: React.FC = () => {
 
       {/* Filter bar */}
       <div className="bg-slate-100 rounded-xl p-4 mb-6 flex flex-wrap items-center gap-4">
+        {/* Search */}
+        <div className="relative flex-1 max-w-xs">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, email or role..."
+            className="w-full pl-9 pr-8 py-2 bg-white rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-100 border-none"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
           <span className="material-symbols-outlined text-lg">filter_list</span>
           Filters:
