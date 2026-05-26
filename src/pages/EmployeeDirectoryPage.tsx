@@ -106,6 +106,19 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
 
 const STATUSES: EmployeeStatus[] = ["Active", "Inactive"];
 
+const exportEmployeesCSV = (employees: DirectoryEmployee[]) => {
+  const headers = ["ID", "Name", "Email", "Department", "Role", "Daily Wage", "Status"];
+  const rows = employees.map((e) => [e.id, e.name, e.email, e.department, e.role, e.dailyWage.toFixed(2), e.status]);
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "employee_directory.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 // â”€â”€â”€ Add Employee Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const EMPTY_FORM: NewEmployeeForm = {
@@ -672,13 +685,22 @@ const EmployeeDirectoryPage: React.FC = () => {
             Manage your workforce, roles, and compensation details.
           </p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-gradient-to-br from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold shadow-lg shadow-blue-200 hover:scale-[1.02] transition-transform"
-        >
-          <span className="material-symbols-outlined text-xl">add</span>
-          Add Employee
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => exportEmployeesCSV(filtered.length > 0 ? filtered : employees)}
+            className="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-lg flex items-center gap-2 font-semibold hover:bg-slate-50 transition-colors shadow-sm"
+          >
+            <span className="material-symbols-outlined text-xl">download</span>
+            Export CSV
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-br from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold shadow-lg shadow-blue-200 hover:scale-[1.02] transition-transform"
+          >
+            <span className="material-symbols-outlined text-xl">add</span>
+            Add Employee
+          </button>
+        </div>
       </div>
 
       {/* Filter bar */}
