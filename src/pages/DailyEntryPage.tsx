@@ -143,9 +143,11 @@ const DailyEntryPage: React.FC = () => {
         hoursWorked: emp.hoursWorked === 0 ? 8 : emp.hoursWorked,
       })),
     );
+    toast.info(`All ${employees.length} employees marked as Present`);
   };
 
   const handleMarkAllAbsent = () => {
+    if (!window.confirm("Mark all employees as Absent for this day?")) return;
     setEmployees((prev) =>
       prev.map((emp) => ({
         ...emp,
@@ -153,6 +155,7 @@ const DailyEntryPage: React.FC = () => {
         hoursWorked: 0,
       })),
     );
+    toast.error(`All ${employees.length} employees marked as Absent`);
   };
 
   const handleDraftSave = () => {
