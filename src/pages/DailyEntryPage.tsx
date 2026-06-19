@@ -7,6 +7,7 @@ import {
 } from "../components/InfoPanels";
 import { useToast } from "../hooks/useToast";
 import { exportAttendanceCsv } from "../utils/csvExport";
+import { getStoredEmployees } from "../utils/employeeStore";
 import type {
   Employee,
   AttendanceStatus,
@@ -88,7 +89,23 @@ const DEPARTMENT_STATS: DepartmentStat[] = [
 // â”€â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const DailyEntryPage: React.FC = () => {
-  const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
+  const [employees, setEmployees] = useState<Employee[]>(() => {
+    const stored = getStoredEmployees();
+    if (stored.length === 0) return INITIAL_EMPLOYEES;
+    return stored
+      .filter((e) => e.status === "Active")
+      .map((e) => ({
+        id: e.id,
+        name: e.name,
+        email: e.email,
+        department: e.department,
+        avatarUrl: e.avatarUrl,
+        initials: e.initials,
+        dailyRate: e.dailyRate,
+        status: "Present" as const,
+        hoursWorked: 8,
+      }));
+  });
   const [currentDate, setCurrentDate] = useState(new Date());
   const toast = useToast();
 
