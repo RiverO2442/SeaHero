@@ -6,6 +6,7 @@ import {
   DepartmentDistribution,
 } from "../components/InfoPanels";
 import { useToast } from "../hooks/useToast";
+import { exportAttendanceCsv } from "../utils/csvExport";
 import type {
   Employee,
   AttendanceStatus,
@@ -186,6 +187,25 @@ const DailyEntryPage: React.FC = () => {
         </div>
 
         {/* Date picker */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              const dateStr = currentDate.toISOString().slice(0, 10);
+              exportAttendanceCsv(dateStr, employees.map((e) => ({
+                name: e.name,
+                department: e.department,
+                status: e.status,
+                hoursWorked: e.hoursWorked,
+                dailyRate: e.dailyRate,
+                estPayout: e.status === "Absent" || e.status === "On Leave" ? 0 : (e.hoursWorked / 8) * e.dailyRate,
+              })));
+              toast.success("Attendance exported to CSV");
+            }}
+            className="px-4 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-sm"
+          >
+            <span className="material-symbols-outlined text-base">download</span>
+            Export CSV
+          </button>
         <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-[0_10px_40px_rgba(42,52,57,0.06)]">
           <button onClick={handlePrevDay} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
             <span className="material-symbols-outlined">chevron_left</span>
@@ -199,6 +219,7 @@ const DailyEntryPage: React.FC = () => {
           <button onClick={handleNextDay} disabled={isToday} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed">
             <span className="material-symbols-outlined">chevron_right</span>
           </button>
+        </div>
         </div>
       </section>
 
