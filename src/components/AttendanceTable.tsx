@@ -87,7 +87,7 @@ export const AttendanceTable: React.FC<AttendanceTableProps> = ({
     </div>
 
     {/* Totals row */}
-    <div className="px-8 py-4 bg-slate-50 border-t border-slate-200 grid grid-cols-3 gap-4 text-sm">
+    <div className="px-8 py-4 bg-slate-50 border-t border-slate-200 grid grid-cols-4 gap-4 text-sm">
       <div>
         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Present</span>
         <p className="font-bold text-emerald-600 mt-0.5">{employees.filter((e) => e.status === "Present" || e.status === "Half-day").length}</p>
@@ -97,8 +97,14 @@ export const AttendanceTable: React.FC<AttendanceTableProps> = ({
         <p className="font-bold text-red-500 mt-0.5">{employees.filter((e) => e.status === "Absent" || e.status === "On Leave").length}</p>
       </div>
       <div>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Hours</span>
+        <p className="font-bold text-slate-700 mt-0.5">{employees.reduce((s, e) => s + e.hoursWorked, 0)}h</p>
+      </div>
+      <div>
         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Payout</span>
-        <p className="font-bold text-blue-600 mt-0.5">${employees.reduce((s, e) => s + (e.status === "Absent" ? 0 : e.hoursWorked * e.dailyRate), 0).toFixed(2)}</p>
+        <p className="font-bold text-blue-600 mt-0.5">
+          ${employees.reduce((s, e) => s + (e.status === "Absent" || e.status === "On Leave" ? 0 : (e.hoursWorked / 8) * e.dailyRate), 0).toFixed(2)}
+        </p>
       </div>
     </div>
 
