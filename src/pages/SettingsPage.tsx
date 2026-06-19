@@ -43,15 +43,15 @@ const Section: React.FC<{ icon: string; title: string; subtitle: string; childre
 );
 
 const SettingsPage: React.FC = () => {
-  const [name, setName] = useLocalStorage(“settings_name”, “Alex Thompson”);
-  const [email, setEmail] = useLocalStorage(“settings_email”, “alex.t@salarypro.com”);
-  const [timezone, setTimezone] = useLocalStorage(“settings_timezone”, “UTC+7 — Ho Chi Minh City”);
-  const [taxRate, setTaxRate] = useLocalStorage(“settings_taxRate”, “15”);
-  const [payCycle, setPayCycle] = useLocalStorage(“settings_payCycle”, “Monthly”);
-  const [emailNotifs, setEmailNotifs] = useLocalStorage(“settings_emailNotifs”, true);
-  const [payrollAlerts, setPayrollAlerts] = useLocalStorage(“settings_payrollAlerts”, true);
-  const [systemAlerts, setSystemAlerts] = useLocalStorage(“settings_systemAlerts”, false);
-  const [weeklyReport, setWeeklyReport] = useLocalStorage(“settings_weeklyReport”, true);
+  const [name, setName] = useLocalStorage("settings_name", "Alex Thompson");
+  const [email, setEmail] = useLocalStorage("settings_email", "alex.t@salarypro.com");
+  const [timezone, setTimezone] = useLocalStorage("settings_timezone", "UTC+7 - Ho Chi Minh City");
+  const [taxRate, setTaxRate] = useLocalStorage("settings_taxRate", "15");
+  const [payCycle, setPayCycle] = useLocalStorage("settings_payCycle", "Monthly");
+  const [emailNotifs, setEmailNotifs] = useLocalStorage("settings_emailNotifs", true);
+  const [payrollAlerts, setPayrollAlerts] = useLocalStorage("settings_payrollAlerts", true);
+  const [systemAlerts, setSystemAlerts] = useLocalStorage("settings_systemAlerts", false);
+  const [weeklyReport, setWeeklyReport] = useLocalStorage("settings_weeklyReport", true);
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -98,7 +98,7 @@ const SettingsPage: React.FC = () => {
               <div className="relative">
                 <select value={timezone} onChange={(e) => setTimezone(e.target.value)}
                   className="w-full appearance-none px-4 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 bg-white">
-                  {["UTC+7 â€” Ho Chi Minh City", "UTC+0 â€” London", "UTC-5 â€” New York", "UTC+9 â€” Tokyo"].map((tz) => (
+                  {["UTC+7 - Ho Chi Minh City", "UTC+0 - London", "UTC-5 - New York", "UTC+9 - Tokyo"].map((tz) => (
                     <option key={tz}>{tz}</option>
                   ))}
                 </select>
@@ -131,7 +131,7 @@ const SettingsPage: React.FC = () => {
             </div>
             <div className="p-4 bg-blue-50 rounded-xl">
               <p className="text-xs font-bold text-blue-700">Current Configuration</p>
-              <p className="text-xs text-blue-600 mt-1">{taxRate}% tax rate â€” {payCycle} cycle</p>
+              <p className="text-xs text-blue-600 mt-1">{taxRate}% tax rate &mdash; {payCycle} cycle</p>
             </div>
           </div>
         </Section>
@@ -147,7 +147,7 @@ const SettingsPage: React.FC = () => {
         </Section>
 
         {/* Danger zone */}
-        <Section icon="warning" title="Danger Zone" subtitle="Irreversible actions â€” proceed with caution">
+        <Section icon="warning" title="Danger Zone" subtitle="Irreversible actions - proceed with caution">
           <div className="space-y-3">
             <button className="w-full py-2.5 px-4 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors text-left flex items-center gap-2">
               <span className="material-symbols-outlined text-base">delete_forever</span>

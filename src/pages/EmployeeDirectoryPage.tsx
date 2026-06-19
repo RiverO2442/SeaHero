@@ -635,7 +635,6 @@ const EmployeeDirectoryPage: React.FC = () => {
     });
   };
 
-  const allOnPageSelected = paginated.length > 0 && paginated.every((e) => selectedIds.has(e.id));
   const someSelected = selectedIds.size > 0;
 
   const handleAddEmployee = (emp: DirectoryEmployee) => {
@@ -671,6 +670,7 @@ const EmployeeDirectoryPage: React.FC = () => {
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PER_PAGE));
   const paginated = sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const allOnPageSelected = paginated.length > 0 && paginated.every((e) => selectedIds.has(e.id));
 
   return (
     <>
