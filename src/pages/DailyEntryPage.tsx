@@ -5,6 +5,7 @@ import {
   RecentAdjustments,
   DepartmentDistribution,
 } from "../components/InfoPanels";
+import { useToast } from "../hooks/useToast";
 import type {
   Employee,
   AttendanceStatus,
@@ -88,6 +89,7 @@ const DEPARTMENT_STATS: DepartmentStat[] = [
 const DailyEntryPage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const toast = useToast();
 
   const handlePrevDay = () => {
     setCurrentDate((d) => {
@@ -156,7 +158,7 @@ const DailyEntryPage: React.FC = () => {
   const handleDraftSave = () => {
     const key = `attendance_draft_${currentDate.toISOString().slice(0, 10)}`;
     localStorage.setItem(key, JSON.stringify(employees));
-    console.log("Draft saved to localStorage:", key);
+    toast.info(`Draft saved for ${formattedDate}`);
   };
 
   const handleCommit = () => {
@@ -164,7 +166,7 @@ const DailyEntryPage: React.FC = () => {
     localStorage.setItem(key, JSON.stringify(employees));
     const draftKey = `attendance_draft_${currentDate.toISOString().slice(0, 10)}`;
     localStorage.removeItem(draftKey);
-    console.log("Entries committed:", key);
+    toast.success(`Entries committed for ${formattedDate}`);
   };
 
   return (
