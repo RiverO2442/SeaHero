@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { exportPayrollCsv } from "../utils/csvExport";
+import { useToast } from "../hooks/useToast";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -821,6 +823,22 @@ const PayrollPage: React.FC = () => {
   const [entries, setEntries] = useState<PayrollEntry[]>(PAYROLL_ENTRIES);
   const [period, setPeriod] = useState("October 2026");
   const [statusFilter, setStatusFilter] = useState<PayrollStatus | "All">("All");
+  const toast = useToast();
+
+  const handleExportCsv = () => {
+    const slug = period.replace(/\s+/g, "_").toLowerCase();
+    exportPayrollCsv(slug, entries.map((e) => ({
+      name: e.name,
+      department: e.department,
+      role: e.role,
+      daysWorked: e.daysWorked,
+      grossPay: e.grossPay,
+      deductions: e.deductions,
+      netPay: e.netPay,
+      status: e.status,
+    })));
+    toast.success(`Payroll exported for ${period}`);
+  };
 
   const handleApprove = (id: string) => {
     setEntries((prev) =>
@@ -863,8 +881,12 @@ const PayrollPage: React.FC = () => {
             </select>
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-sm">expand_more</span>
           </div>
-          <button className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
-            Export Report
+          <button
+            onClick={handleExportCsv}
+            className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">download</span>
+            Export CSV
           </button>
           <button className="px-5 py-2.5 bg-gradient-to-br from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-blue-200 hover:scale-[1.02] transition-transform">
             Run New Payroll
