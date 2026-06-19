@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from "react";
+import { mergeStoredEmployees } from "../utils/employeeStore";
 
 const PER_PAGE = 5;
 
@@ -570,6 +571,20 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    mergeStoredEmployees(employees.map((e) => ({
+      id: e.id,
+      name: e.name,
+      email: e.email,
+      department: e.department,
+      avatarUrl: e.avatarUrl,
+      initials: e.initials,
+      dailyRate: e.dailyWage,
+      role: e.role,
+      status: e.status,
+    })));
+  }, [employees]);
 
   useEffect(() => { setPage(1); }, [search, deptFilter, statusFilter]);
 
