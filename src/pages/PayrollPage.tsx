@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { exportPayrollCsv } from "../utils/csvExport";
 import { useToast } from "../hooks/useToast";
+import { MonthDelta } from "../components/MonthDelta";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -217,6 +218,10 @@ const fmt = (n: number) =>
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+const PREV_GROSS = 421650;
+const PREV_NET = 358400;
+const PREV_TAX = 63250;
+
 const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
   const totalGross = entries.reduce((s, e) => s + e.grossPay, 0);
   const totalNet = entries.reduce((s, e) => s + e.netPay, 0);
@@ -231,6 +236,7 @@ const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
       label: "Total Gross Payroll",
       value: fmt(totalGross),
       sub: "October 2026 cycle",
+      delta: <MonthDelta current={totalGross} previous={PREV_GROSS} title="vs September" />,
     },
     {
       icon: "payments",
@@ -238,7 +244,8 @@ const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
       color: "text-emerald-600",
       label: "Net Payout",
       value: fmt(totalNet),
-      sub: `After tax & deductions`,
+      sub: "After tax & deductions",
+      delta: <MonthDelta current={totalNet} previous={PREV_NET} title="vs September" />,
     },
     {
       icon: "receipt_long",
@@ -247,6 +254,7 @@ const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
       label: "Total Tax Withheld",
       value: fmt(totalTax),
       sub: "Remitted to authorities",
+      delta: <MonthDelta current={totalTax} previous={PREV_TAX} title="vs September" />,
     },
     {
       icon: "pending_actions",
@@ -256,6 +264,7 @@ const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
       value: String(pending),
       sub: "Employees pending review",
       pulse: pending > 0,
+      delta: null,
     },
   ];
 
@@ -270,9 +279,9 @@ const SummaryCards: React.FC<{ entries: PayrollEntry[] }> = ({ entries }) => {
             <div className={`p-3 ${c.bg} rounded-lg ${c.color}`}>
               <span className="material-symbols-outlined">{c.icon}</span>
             </div>
-            {c.pulse && (
+            {c.pulse ? (
               <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse mt-1" />
-            )}
+            ) : c.delta ?? null}
           </div>
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {c.label}
