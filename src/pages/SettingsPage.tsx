@@ -146,6 +146,35 @@ const SettingsPage: React.FC = () => {
           </div>
         </Section>
 
+        {/* Keyboard shortcuts */}
+        <Section icon="keyboard" title="Keyboard Shortcuts" subtitle="Speed up navigation with hotkeys">
+          <div className="space-y-2">
+            {[
+              { keys: ["G", "then", "D"], action: "Go to Dashboard" },
+              { keys: ["G", "then", "E"], action: "Go to Employees" },
+              { keys: ["G", "then", "P"], action: "Go to Payroll" },
+              { keys: ["G", "then", "A"], action: "Go to Analytics" },
+              { keys: ["G", "then", "R"], action: "Go to Reports" },
+              { keys: ["/"], action: "Focus search (Employee Directory)" },
+            ].map(({ keys, action }) => (
+              <div key={action} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                <span className="text-sm text-slate-600">{action}</span>
+                <div className="flex items-center gap-1">
+                  {keys.map((k, i) => (
+                    k === "then" ? (
+                      <span key={i} className="text-[10px] text-slate-400 font-medium px-0.5">then</span>
+                    ) : (
+                      <kbd key={i} className="inline-flex items-center justify-center min-w-[26px] h-6 px-1.5 bg-slate-100 border border-slate-300 rounded text-[11px] font-bold text-slate-700 shadow-sm">
+                        {k}
+                      </kbd>
+                    )
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
         {/* Danger zone */}
         <Section icon="warning" title="Danger Zone" subtitle="Irreversible actions - proceed with caution">
           <div className="space-y-3">
