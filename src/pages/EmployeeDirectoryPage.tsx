@@ -747,20 +747,24 @@ const EmployeeDirectoryPage: React.FC = () => {
           )}
         </div>
 
-        {/* Department filter */}
-        <div className="relative">
-          <select
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-            className="appearance-none bg-white border-none rounded-lg py-2 pl-4 pr-10 text-sm font-medium focus:ring-2 focus:ring-blue-100 cursor-pointer text-slate-800 outline-none"
-          >
-            {["All Departments", ...DEPARTMENTS].map((d) => (
-              <option key={d}>{d}</option>
-            ))}
-          </select>
-          <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-sm">
-            expand_more
-          </span>
+        {/* Department filter chips */}
+        <div className="flex flex-wrap gap-1.5">
+          {["All Departments", ...DEPARTMENTS].map((d) => {
+            const active = deptFilter === d;
+            return (
+              <button
+                key={d}
+                onClick={() => setDeptFilter(d)}
+                className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                  active
+                    ? "bg-blue-600 text-white shadow-sm shadow-blue-200"
+                    : "bg-white text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {d === "All Departments" ? "All" : d}
+              </button>
+            );
+          })}
         </div>
 
         {/* Status filter */}
