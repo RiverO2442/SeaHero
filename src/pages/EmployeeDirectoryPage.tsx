@@ -567,7 +567,7 @@ const EmployeeDirectoryPage: React.FC = () => {
     });
   };
   const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState<"name" | "dailyWage" | null>(null);
+  const [sortField, setSortField] = useState<"name" | "dailyWage" | "role" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -599,7 +599,7 @@ const EmployeeDirectoryPage: React.FC = () => {
     return () => document.removeEventListener("keydown", handler);
   }, []);
 
-  const toggleSort = (field: "name" | "dailyWage") => {
+  const toggleSort = (field: "name" | "dailyWage" | "role") => {
     if (sortField === field) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
@@ -661,9 +661,10 @@ const EmployeeDirectoryPage: React.FC = () => {
 
   const sorted = sortField
     ? [...filtered].sort((a, b) => {
-        const v = sortField === "name"
-          ? a.name.localeCompare(b.name)
-          : a.dailyWage - b.dailyWage;
+        const v =
+          sortField === "name" ? a.name.localeCompare(b.name) :
+          sortField === "role" ? a.role.localeCompare(b.role) :
+          a.dailyWage - b.dailyWage;
         return sortDir === "asc" ? v : -v;
       })
     : filtered;
@@ -787,12 +788,24 @@ const EmployeeDirectoryPage: React.FC = () => {
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
             Sort By:
           </span>
-          <button className="text-sm font-bold text-blue-600 flex items-center gap-1">
-            Recently Joined
-            <span className="material-symbols-outlined text-sm">
-              arrow_downward
-            </span>
-          </button>
+          {(["name", "role", "dailyWage"] as const).map((f) => {
+            const labels = { name: "Name", role: "Role", dailyWage: "Wage" };
+            const active = sortField === f;
+            return (
+              <button
+                key={f}
+                onClick={() => toggleSort(f)}
+                className={`text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-0.5 transition-colors ${
+                  active ? "text-blue-600 bg-blue-50" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                {labels[f]}
+                <span className="material-symbols-outlined text-xs">
+                  {active ? (sortDir === "asc" ? "arrow_upward" : "arrow_downward") : "unfold_more"}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -842,7 +855,7 @@ const EmployeeDirectoryPage: React.FC = () => {
                 />
               </th>
               {(["Employee Name", "Department", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
-                const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : null;
+                const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : col === "Role" ? "role" : null;
                 const isActive = sortField === field;
                 return (
                   <th
