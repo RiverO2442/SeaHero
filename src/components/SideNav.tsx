@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "group", label: "Employee Directory", page: "employees" },
   { icon: "event_available", label: "Daily Entry", page: "daily-entry" },
   { icon: "payments", label: "Payroll", page: "payroll" },
+  { icon: "bar_chart", label: "Analytics", page: "analytics" },
   { icon: "settings", label: "Settings", page: "settings" },
 ];
 
