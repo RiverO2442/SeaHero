@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { OnboardingBanner } from "../components/OnboardingBanner";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -118,6 +119,14 @@ const METRIC_CARDS: MetricCard[] = [
   },
 ];
 
+function relativeTime(minutesAgo: number): string {
+  if (minutesAgo < 1) return "Just now";
+  if (minutesAgo < 60) return `${minutesAgo}m ago`;
+  const h = Math.floor(minutesAgo / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
 const ACTIVITY_ITEMS: ActivityItem[] = [
   {
     id: "1",
@@ -128,7 +137,7 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
     iconColor: "",
     title: "Sarah Johnson",
     detail: "Profile updated & salary verified",
-    time: "2 MINS AGO",
+    time: relativeTime(2),
     online: true,
   },
   {
@@ -139,7 +148,7 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
     iconColor: "text-blue-600",
     title: "Batch Release",
     detail: "Released $12,400 to Marketing Dept",
-    time: "45 MINS AGO",
+    time: relativeTime(45),
   },
   {
     id: "3",
@@ -150,7 +159,7 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
     iconColor: "",
     title: "Marcus Leventis",
     detail: "Submitted tax form for review",
-    time: "3 HOURS AGO",
+    time: relativeTime(180),
   },
   {
     id: "4",
@@ -160,7 +169,7 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
     iconColor: "text-red-600",
     title: "System Alert",
     detail: "API Sync failed for Payroll 002",
-    time: "5 HOURS AGO",
+    time: relativeTime(300),
   },
 ];
 
@@ -409,6 +418,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   return (
   <div className="space-y-10">
+    {/* Onboarding */}
+    <OnboardingBanner />
+
     {/* Page header */}
     <section className="flex justify-between items-end">
       <div>
