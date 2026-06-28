@@ -7,9 +7,10 @@ import EmployeeDirectoryPage from "./pages/EmployeeDirectoryPage";
 import PayrollPage from "./pages/PayrollPage";
 import SettingsPage from "./pages/SettingsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import ReportsPage from "./pages/ReportsPage";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
-export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "settings";
+export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "settings";
 
 // ─── App-wide splash skeleton ─────────────────────────────────────────────────
 const AppSkeleton: React.FC = () => (
@@ -84,6 +85,7 @@ function App() {
             {activePage === "employees" && <EmployeeDirectoryPage />}
             {activePage === "payroll" && <PayrollPage />}
             {activePage === "analytics" && <AnalyticsPage />}
+            {activePage === "reports" && <ReportsPage />}
             {activePage === "settings" && <SettingsPage />}
           </div>
         )}
