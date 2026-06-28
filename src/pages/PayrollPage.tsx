@@ -823,7 +823,16 @@ const PayrollPage: React.FC = () => {
   const [entries, setEntries] = useState<PayrollEntry[]>(PAYROLL_ENTRIES);
   const [period, setPeriod] = useState("October 2026");
   const [statusFilter, setStatusFilter] = useState<PayrollStatus | "All">("All");
+  const [nameSearch, setNameSearch] = useState("");
   const toast = useToast();
+
+  const visibleEntries = entries.filter((e) => {
+    const matchesStatus = statusFilter === "All" || e.status === statusFilter;
+    const matchesName = nameSearch.trim() === "" ||
+      e.name.toLowerCase().includes(nameSearch.toLowerCase()) ||
+      e.department.toLowerCase().includes(nameSearch.toLowerCase());
+    return matchesStatus && matchesName;
+  });
 
   const handleExportCsv = () => {
     const slug = period.replace(/\s+/g, "_").toLowerCase();
@@ -897,6 +906,28 @@ const PayrollPage: React.FC = () => {
       {/* Summary KPI cards */}
       <SummaryCards entries={entries} />
 
+      {/* Search + status filters */}
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="relative">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+          <input
+            type="text"
+            placeholder="Search by name or department…"
+            value={nameSearch}
+            onChange={(e) => setNameSearch(e.target.value)}
+            className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 w-64"
+          />
+          {nameSearch && (
+            <button
+              onClick={() => setNameSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Status filter tabs */}
       <div className="flex items-center gap-2 flex-wrap">
         {PAYROLL_STATUSES.map((s) => {
@@ -917,7 +948,7 @@ const PayrollPage: React.FC = () => {
 
       {/* Payroll table */}
       <PayrollTable
-        entries={statusFilter === "All" ? entries : entries.filter((e) => e.status === statusFilter)}
+        entries={visibleEntries}
         onApprove={handleApprove}
         onHold={handleHold}
         onRelease={handleRelease}
