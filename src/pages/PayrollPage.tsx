@@ -402,6 +402,22 @@ const PayrollTable: React.FC<{
 }> = ({ entries, onApprove, onHold, onRelease }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [payslipEntry, setPayslipEntry] = useState<PayrollEntry | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const allSelected = entries.length > 0 && entries.every((e) => selected.has(e.id));
+  const toggleAll = () =>
+    setSelected(allSelected ? new Set() : new Set(entries.map((e) => e.id)));
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const selectedEntries = entries.filter((e) => selected.has(e.id));
+  const canBulkApprove = selectedEntries.some((e) => e.status === "Pending" || e.status === "On Hold");
+  const canBulkRelease = selectedEntries.some((e) => e.status === "Approved");
 
   return (
     <>
@@ -440,9 +456,51 @@ const PayrollTable: React.FC<{
         </div>
       </div>
 
+      {/* Bulk action bar */}
+      {selected.size > 0 && (
+        <div className="px-6 py-3 bg-blue-50 border-b border-blue-100 flex items-center gap-3">
+          <span className="text-xs font-bold text-blue-700">{selected.size} selected</span>
+          <div className="flex gap-2 ml-2">
+            {canBulkApprove && (
+              <button
+                onClick={() => { selectedEntries.forEach((e) => onApprove(e.id)); setSelected(new Set()); }}
+                className="px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition-colors"
+              >
+                Approve selected
+              </button>
+            )}
+            {canBulkRelease && (
+              <button
+                onClick={() => { selectedEntries.forEach((e) => onRelease(e.id)); setSelected(new Set()); }}
+                className="px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors"
+              >
+                Release selected
+              </button>
+            )}
+            <button
+              onClick={() => { selectedEntries.forEach((e) => onHold(e.id)); setSelected(new Set()); }}
+              className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+            >
+              Hold selected
+            </button>
+          </div>
+          <button onClick={() => setSelected(new Set())} className="ml-auto text-slate-400 hover:text-slate-600">
+            <span className="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      )}
+
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-slate-50">
+            <th className="pl-5 py-3.5 w-8">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={toggleAll}
+                className="w-4 h-4 accent-blue-600 cursor-pointer"
+              />
+            </th>
             {[
               "Employee",
               "Department",
@@ -466,11 +524,20 @@ const PayrollTable: React.FC<{
           {entries.map((entry) => (
             <React.Fragment key={entry.id}>
               <tr
-                className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                className={`hover:bg-slate-50/60 transition-colors cursor-pointer ${selected.has(entry.id) ? "bg-blue-50/40" : ""}`}
                 onClick={() =>
                   setExpandedId(expandedId === entry.id ? null : entry.id)
                 }
               >
+                {/* Checkbox */}
+                <td className="pl-5 py-4" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selected.has(entry.id)}
+                    onChange={() => toggleOne(entry.id)}
+                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                  />
+                </td>
                 {/* Employee */}
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
