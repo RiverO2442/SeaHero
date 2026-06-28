@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { SideNav } from "./components/SideNav";
 import { TopNav } from "./components/TopNav";
 import DailyEntryPage from "./pages/DailyEntryPage";
@@ -8,6 +8,7 @@ import PayrollPage from "./pages/PayrollPage";
 import SettingsPage from "./pages/SettingsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ReportsPage from "./pages/ReportsPage";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
 export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "settings";
@@ -51,6 +52,42 @@ function App() {
   const [pageKey, setPageKey] = useState(0);
   const [appReady, setAppReady] = useState(false);
   const prevPage = useRef<Page>("dashboard");
+  const gPending = useRef(false);
+  const gTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleGSequence = useCallback((e: KeyboardEvent) => {
+    if (
+      e.target instanceof HTMLInputElement ||
+      e.target instanceof HTMLTextAreaElement ||
+      e.target instanceof HTMLSelectElement
+    ) return;
+
+    if (e.key === "g" || e.key === "G") {
+      gPending.current = true;
+      if (gTimer.current) clearTimeout(gTimer.current);
+      gTimer.current = setTimeout(() => { gPending.current = false; }, 1000);
+      return;
+    }
+
+    if (gPending.current) {
+      gPending.current = false;
+      if (gTimer.current) clearTimeout(gTimer.current);
+      const map: Record<string, Page> = {
+        d: "dashboard", D: "dashboard",
+        e: "employees", E: "employees",
+        p: "payroll",   P: "payroll",
+        a: "analytics", A: "analytics",
+        r: "reports",   R: "reports",
+        s: "settings",  S: "settings",
+      };
+      if (map[e.key]) { e.preventDefault(); navigate(map[e.key]); }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleGSequence);
+    return () => window.removeEventListener("keydown", handleGSequence);
+  }, [handleGSequence]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
