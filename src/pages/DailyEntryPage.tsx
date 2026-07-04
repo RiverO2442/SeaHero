@@ -1,4 +1,5 @@
 ﻿import React, { useState } from "react";
+import { AttendanceHeatmap } from "../components/AttendanceHeatmap";
 import { KpiCards } from "../components/KpiCards";
 import { AttendanceTable } from "../components/AttendanceTable";
 import {
@@ -274,6 +275,11 @@ const DailyEntryPage: React.FC = () => {
       <section className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
         <RecentAdjustments adjustments={ADJUSTMENTS} />
         <DepartmentDistribution stats={DEPARTMENT_STATS} activeCount={128} />
+      </section>
+
+      {/* Attendance heatmap */}
+      <section className="mt-8">
+        <AttendanceHeatmap />
       </section>
     </>
   );
