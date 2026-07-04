@@ -160,6 +160,151 @@ const AnalyticsPage: React.FC = () => {
           </div>
         </section>
       )}
+
+      {/* Tax breakdown donut */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h4 className="font-bold text-slate-800 mb-1">Tax Breakdown</h4>
+          <p className="text-xs text-slate-500 mb-6">Gross vs tax vs deductions vs net — October 2026</p>
+          {(() => {
+            const gross = 47080;
+            const tax = 7640;
+            const deductions = 620;
+            const net = gross - tax - deductions;
+            const segments = [
+              { label: "Net Pay", value: net, color: "#2563eb" },
+              { label: "Tax Withheld", value: tax, color: "#e11d48" },
+              { label: "Deductions", value: deductions, color: "#d97706" },
+            ];
+            const total = gross;
+            let cumAngle = -Math.PI / 2;
+            const cx = 90; const cy = 90; const r = 70; const inner = 42;
+            const arcs = segments.map((s) => {
+              const angle = (s.value / total) * 2 * Math.PI;
+              const x1 = cx + r * Math.cos(cumAngle);
+              const y1 = cy + r * Math.sin(cumAngle);
+              cumAngle += angle;
+              const x2 = cx + r * Math.cos(cumAngle);
+              const y2 = cy + r * Math.sin(cumAngle);
+              const ix1 = cx + inner * Math.cos(cumAngle - angle);
+              const iy1 = cy + inner * Math.sin(cumAngle - angle);
+              const ix2 = cx + inner * Math.cos(cumAngle);
+              const iy2 = cy + inner * Math.sin(cumAngle);
+              const large = angle > Math.PI ? 1 : 0;
+              return { ...s, d: `M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${inner},${inner} 0 ${large},0 ${ix1},${iy1} Z`, pct: ((s.value / total) * 100).toFixed(1) };
+            });
+            return (
+              <div className="flex items-center gap-8">
+                <svg width={180} height={180} viewBox="0 0 180 180">
+                  {arcs.map((a) => (
+                    <path key={a.label} d={a.d} fill={a.color} className="hover:opacity-90 transition-opacity cursor-default" />
+                  ))}
+                  <text x={cx} y={cy - 6} textAnchor="middle" className="text-xs" fontSize={11} fontWeight="bold" fill="#1e293b">{fmt(net)}</text>
+                  <text x={cx} y={cy + 10} textAnchor="middle" fontSize={9} fill="#64748b">net pay</text>
+                </svg>
+                <div className="space-y-3">
+                  {arcs.map((a) => (
+                    <div key={a.label} className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: a.color }} />
+                      <span className="text-xs text-slate-600">{a.label}</span>
+                      <span className="text-xs font-bold text-slate-800 ml-auto pl-4">{a.pct}%</span>
+                    </div>
+                  ))}
+                  <div className="pt-2 border-t border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-sm shrink-0 bg-slate-200" />
+                      <span className="text-xs text-slate-600">Gross Total</span>
+                      <span className="text-xs font-bold text-slate-800 ml-auto pl-4">{fmt(gross)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* Wage distribution */}
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h4 className="font-bold text-slate-800 mb-1">Wage Distribution</h4>
+          <p className="text-xs text-slate-500 mb-6">Headcount by daily rate bracket</p>
+          {(() => {
+            const brackets = [
+              { label: "$400+", count: 12, color: "bg-blue-600" },
+              { label: "$300–$400", count: 28, color: "bg-blue-400" },
+              { label: "$200–$300", count: 45, color: "bg-blue-300" },
+              { label: "Under $200", count: 51, color: "bg-slate-300" },
+            ];
+            const max = Math.max(...brackets.map((b) => b.count));
+            return (
+              <div className="space-y-4">
+                {brackets.map((b) => (
+                  <div key={b.label}>
+                    <div className="flex justify-between text-sm mb-1.5">
+                      <span className="font-semibold text-slate-700">{b.label}</span>
+                      <span className="font-bold text-slate-800">{b.count} employees</span>
+                    </div>
+                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${b.color} transition-all duration-700`} style={{ width: `${(b.count / max) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+                <p className="text-xs text-slate-400 pt-2">136 total employees across all brackets</p>
+              </div>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* Department comparison table */}
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100">
+          <h4 className="font-bold text-slate-800">Department Comparison</h4>
+          <p className="text-xs text-slate-500 mt-0.5">Side-by-side payroll metrics by department</p>
+        </div>
+        <table className="w-full text-left">
+          <thead>
+            <tr className="bg-slate-50">
+              {["Department", "Headcount", "Avg Daily Rate", "Monthly Budget", "% of Total", "Budget/Head"].map((col) => (
+                <th key={col} className="px-6 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {DEPT_DATA.map((d) => (
+              <tr key={d.dept} className="hover:bg-slate-50/60 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                    <span className="text-sm font-semibold text-slate-800">{d.dept}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-700">{d.headcount}</td>
+                <td className="px-6 py-4 text-sm font-semibold text-slate-800">{fmt(d.avgWage)}</td>
+                <td className="px-6 py-4 text-sm font-bold text-slate-800">{fmt(d.budget)}</td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-[80px]">
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(d.budget / totalBudget) * 100}%`, backgroundColor: d.color }} />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600">{((d.budget / totalBudget) * 100).toFixed(1)}%</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-500">{fmt(Math.round(d.budget / d.headcount))}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="bg-slate-50 border-t-2 border-slate-200">
+              <td className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Total</td>
+              <td className="px-6 py-3 text-sm font-extrabold text-slate-800">{totalHeadcount}</td>
+              <td className="px-6 py-3 text-sm font-semibold text-slate-500">—</td>
+              <td className="px-6 py-3 text-sm font-extrabold text-blue-700">{fmt(totalBudget)}</td>
+              <td className="px-6 py-3 text-xs font-bold text-slate-500">100%</td>
+              <td className="px-6 py-3 text-sm font-semibold text-slate-500">{fmt(Math.round(totalBudget / totalHeadcount))}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
     </div>
   );
 };
