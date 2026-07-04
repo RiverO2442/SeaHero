@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { DateRangePicker } from "../components/DateRangePicker";
+import type { DateRange } from "../components/DateRangePicker";
+import { ExportFormatModal } from "../components/ExportFormatModal";
 
 interface ReportDef {
   id: string;
@@ -39,6 +42,8 @@ function downloadCsv(filename: string, headers: string[], rows: string[][]) {
 const ReportsPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<typeof CATEGORIES[number]>("all");
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>({ from: "2026-10-01", to: "2026-10-31" });
+  const [exportModal, setExportModal] = useState<ReportDef | null>(null);
 
   const filtered = REPORTS.filter((r) => activeCategory === "all" || r.category === activeCategory);
 
@@ -56,15 +61,23 @@ const ReportsPage: React.FC = () => {
 
   return (
     <div className="space-y-10">
+      {exportModal && (
+        <ExportFormatModal
+          reportTitle={exportModal.title}
+          onExport={(fmt) => {
+            if (fmt === "print") { window.print(); return; }
+            handleDownload(exportModal);
+          }}
+          onClose={() => setExportModal(null)}
+        />
+      )}
       {/* Header */}
       <section className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-800">Reports</h2>
           <p className="text-slate-500 font-medium mt-1">Generate and download reports for payroll, HR, and compliance.</p>
         </div>
-        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          {REPORTS.length} reports available
-        </div>
+        <DateRangePicker value={dateRange} onChange={setDateRange} />
       </section>
 
       {/* Category filter */}
@@ -110,14 +123,14 @@ const ReportsPage: React.FC = () => {
                   {report.format}
                 </span>
                 <button
-                  onClick={() => handleDownload(report)}
+                  onClick={() => setExportModal(report)}
                   disabled={isLoading}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow-sm shadow-blue-200 hover:scale-[1.02] transition-all disabled:opacity-70 disabled:scale-100"
                 >
                   {isLoading ? (
                     <><span className="material-symbols-outlined text-xs animate-spin">progress_activity</span> Generating…</>
                   ) : (
-                    <><span className="material-symbols-outlined text-xs">download</span> Download</>
+                    <><span className="material-symbols-outlined text-xs">download</span> Export</>
                   )}
                 </button>
               </div>
