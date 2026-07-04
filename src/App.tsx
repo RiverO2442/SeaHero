@@ -9,6 +9,7 @@ import SettingsPage from "./pages/SettingsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AuditLogPage from "./pages/AuditLogPage";
+import BackToTop from "./components/BackToTop";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
@@ -114,6 +115,7 @@ function App() {
       <SideNav activePage={activePage} onNavigate={navigate} />
       <TopNav activePage={activePage} darkMode={darkMode} onToggleDark={() => setDarkMode((d) => !d)} />
 
+      <BackToTop />
       <main className="ml-64 pt-24 px-10 pb-12 min-h-screen">
         {!appReady ? (
           <AppSkeleton />
