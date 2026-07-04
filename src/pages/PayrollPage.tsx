@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { exportPayrollCsv } from "../utils/csvExport";
 import { useToast } from "../hooks/useToast";
 import { MonthDelta } from "../components/MonthDelta";
+import { PayslipPrintModal } from "../components/PayslipPrintModal";
+import type { PayslipEntry } from "../components/PayslipPrintModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -411,6 +413,7 @@ const PayrollTable: React.FC<{
 }> = ({ entries, onApprove, onHold, onRelease }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [payslipEntry, setPayslipEntry] = useState<PayrollEntry | null>(null);
+  const [printEntry, setPrintEntry] = useState<PayslipEntry | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const allSelected = entries.length > 0 && entries.every((e) => selected.has(e.id));
@@ -431,6 +434,7 @@ const PayrollTable: React.FC<{
   return (
     <>
     {payslipEntry && <SendPayslipModal entry={payslipEntry} onClose={() => setPayslipEntry(null)} />}
+    {printEntry && <PayslipPrintModal entry={printEntry} period="October 2026" onClose={() => setPrintEntry(null)} />}
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Table header */}
       <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -673,6 +677,13 @@ const PayrollTable: React.FC<{
                       className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                     >
                       <span className="material-symbols-outlined text-sm">send</span>
+                    </button>
+                    <button
+                      onClick={() => setPrintEntry(entry)}
+                      title="Print payslip"
+                      className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-purple-50 rounded-lg transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">print</span>
                     </button>
                   </div>
                 </td>
@@ -1029,6 +1040,46 @@ const PayrollPage: React.FC = () => {
         onHold={handleHold}
         onRelease={handleRelease}
       />
+
+      {/* Payout timeline sparkline */}
+      <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h4 className="font-bold text-slate-800">Payout Timeline</h4>
+            <p className="text-xs text-slate-500 mt-0.5">Projected daily disbursements — October 2026</p>
+          </div>
+          <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+            {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+          </span>
+        </div>
+        {(() => {
+          const weeks = [
+            { label: "Wk 1 (Oct 1–7)", amount: 11200, pct: 24 },
+            { label: "Wk 2 (Oct 8–14)", amount: 10800, pct: 23 },
+            { label: "Wk 3 (Oct 15–21)", amount: 12400, pct: 26 },
+            { label: "Wk 4 (Oct 22–31)", amount: 12680, pct: 27 },
+          ];
+          const maxAmt = Math.max(...weeks.map((w) => w.amount));
+          const fmt2 = (n: number) => `$${(n / 1000).toFixed(1)}k`;
+          return (
+            <div className="flex items-end gap-6">
+              {weeks.map((w) => (
+                <div key={w.label} className="flex-1 flex flex-col items-center gap-2 group">
+                  <span className="text-xs font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">{fmt2(w.amount)}</span>
+                  <div className="w-full bg-slate-100 rounded-lg overflow-hidden" style={{ height: 80 }}>
+                    <div
+                      className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-lg transition-all duration-500"
+                      style={{ height: `${(w.amount / maxAmt) * 100}%`, marginTop: `${100 - (w.amount / maxAmt) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 text-center leading-tight">{w.label}</span>
+                  <span className="text-[10px] text-slate-500">{w.pct}%</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+      </div>
 
       {/* Bottom panels */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
