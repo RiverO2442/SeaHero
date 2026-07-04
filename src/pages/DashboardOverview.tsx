@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { OnboardingBanner } from "../components/OnboardingBanner";
+import { BudgetAlertBanner } from "../components/BudgetAlertBanner";
+import { TopEarnersWidget } from "../components/TopEarnersWidget";
+import { LeaveTrackerWidget } from "../components/LeaveTrackerWidget";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -421,6 +424,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
     {/* Onboarding */}
     <OnboardingBanner />
 
+    {/* Budget alert */}
+    <BudgetAlertBanner totalPayroll={452890} />
+
     {/* Page header */}
     <section className="flex justify-between items-end">
       <div>
@@ -462,9 +468,11 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         <QuickActions onNavigate={onNavigate} />
       </div>
 
-      {/* Right: activity feed + promo */}
+      {/* Right: activity feed + leave + top earners + promo */}
       <div className="space-y-6">
         <ActivityFeed />
+        <LeaveTrackerWidget />
+        <TopEarnersWidget />
         <PromoCard />
       </div>
     </section>
