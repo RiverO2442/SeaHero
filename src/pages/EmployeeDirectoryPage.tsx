@@ -1,5 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from "react";
 import { mergeStoredEmployees } from "../utils/employeeStore";
+import { EmployeeProfileDrawer } from "../components/EmployeeProfileDrawer";
+import type { DrawerEmployee } from "../components/EmployeeProfileDrawer";
 
 const PER_PAGE = 5;
 
@@ -557,6 +559,7 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [showModal, setShowModal] = useState(false);
   const [editEmployee, setEditEmployee] = useState<DirectoryEmployee | null>(null);
+  const [profileEmployee, setProfileEmployee] = useState<DrawerEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const handleSaveEmployee = (emp: DirectoryEmployee) => {
@@ -675,6 +678,12 @@ const EmployeeDirectoryPage: React.FC = () => {
 
   return (
     <>
+      {/* Employee Profile Drawer */}
+      <EmployeeProfileDrawer
+        employee={profileEmployee}
+        onClose={() => setProfileEmployee(null)}
+      />
+
       {/* Add Employee Modal */}
       {showModal && (
         <AddEmployeeModal
@@ -962,6 +971,13 @@ const EmployeeDirectoryPage: React.FC = () => {
                       </div>
                     ) : (
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => setProfileEmployee(emp)}
+                          title="View profile"
+                          className="p-2 hover:bg-blue-50 hover:text-blue-500 rounded-lg text-slate-400 transition-colors"
+                        >
+                          <span className="material-symbols-outlined">account_circle</span>
+                        </button>
                         <button
                           onClick={() => { navigator.clipboard.writeText(emp.email); }}
                           title="Copy email"
