@@ -8,10 +8,11 @@ import PayrollPage from "./pages/PayrollPage";
 import SettingsPage from "./pages/SettingsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ReportsPage from "./pages/ReportsPage";
+import AuditLogPage from "./pages/AuditLogPage";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
-export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "settings";
+export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "audit-log" | "settings";
 
 // ─── App-wide splash skeleton ─────────────────────────────────────────────────
 const AppSkeleton: React.FC = () => (
@@ -78,7 +79,8 @@ function App() {
         p: "payroll",   P: "payroll",
         a: "analytics", A: "analytics",
         r: "reports",   R: "reports",
-        s: "settings",  S: "settings",
+            l: "audit-log", L: "audit-log",
+            s: "settings",  S: "settings",
       };
       if (map[e.key]) { e.preventDefault(); navigate(map[e.key]); }
     }
@@ -123,6 +125,7 @@ function App() {
             {activePage === "payroll" && <PayrollPage />}
             {activePage === "analytics" && <AnalyticsPage />}
             {activePage === "reports" && <ReportsPage />}
+            {activePage === "audit-log" && <AuditLogPage />}
             {activePage === "settings" && <SettingsPage />}
           </div>
         )}

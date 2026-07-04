@@ -6,6 +6,9 @@ const PAGE_TITLES: Record<Page, string> = {
   "daily-entry": "Daily Attendance",
   employees: "Employee Directory",
   payroll: "Payroll Management",
+  analytics: "Analytics",
+  reports: "Reports",
+  "audit-log": "Audit Log",
   settings: "Settings",
 };
 
