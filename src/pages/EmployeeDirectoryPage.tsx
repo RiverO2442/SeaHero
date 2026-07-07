@@ -2,6 +2,7 @@
 import { mergeStoredEmployees } from "../utils/employeeStore";
 import { EmployeeProfileDrawer } from "../components/EmployeeProfileDrawer";
 import type { DrawerEmployee } from "../components/EmployeeProfileDrawer";
+import { EmployeeNotepad } from "../components/EmployeeNotepad";
 
 const PER_PAGE = 5;
 
@@ -561,6 +562,7 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [editEmployee, setEditEmployee] = useState<DirectoryEmployee | null>(null);
   const [profileEmployee, setProfileEmployee] = useState<DrawerEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [noteEmployee, setNoteEmployee] = useState<DirectoryEmployee | null>(null);
 
   const handleSaveEmployee = (emp: DirectoryEmployee) => {
     setEmployees((prev) => {
@@ -683,6 +685,15 @@ const EmployeeDirectoryPage: React.FC = () => {
         employee={profileEmployee}
         onClose={() => setProfileEmployee(null)}
       />
+
+      {/* Employee Notepad */}
+      {noteEmployee && (
+        <EmployeeNotepad
+          employeeId={noteEmployee.id}
+          employeeName={noteEmployee.name}
+          onClose={() => setNoteEmployee(null)}
+        />
+      )}
 
       {/* Add Employee Modal */}
       {showModal && (
@@ -984,6 +995,13 @@ const EmployeeDirectoryPage: React.FC = () => {
                           className="p-2 hover:bg-slate-100 hover:text-blue-500 rounded-lg text-slate-400 transition-colors"
                         >
                           <span className="material-symbols-outlined">content_copy</span>
+                        </button>
+                        <button
+                          onClick={() => setNoteEmployee(emp)}
+                          title="Add note"
+                          className="p-2 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors"
+                        >
+                          <span className="material-symbols-outlined">sticky_note_2</span>
                         </button>
                         <button onClick={() => setEditEmployee(emp)} className="p-2 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors">
                           <span className="material-symbols-outlined">edit</span>
