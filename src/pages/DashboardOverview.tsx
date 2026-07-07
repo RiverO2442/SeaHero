@@ -3,6 +3,7 @@ import { OnboardingBanner } from "../components/OnboardingBanner";
 import { BudgetAlertBanner } from "../components/BudgetAlertBanner";
 import { TopEarnersWidget } from "../components/TopEarnersWidget";
 import { LeaveTrackerWidget } from "../components/LeaveTrackerWidget";
+import { TeamHeadcountWidget } from "../components/TeamHeadcountWidget";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -473,6 +474,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         <ActivityFeed />
         <LeaveTrackerWidget />
         <TopEarnersWidget />
+        <TeamHeadcountWidget />
         <PromoCard />
       </div>
     </section>
