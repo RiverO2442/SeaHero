@@ -10,6 +10,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import BackToTop from "./components/BackToTop";
+import { NetworkStatusBanner } from "./components/NetworkStatusBanner";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
@@ -116,6 +117,7 @@ function App() {
       <TopNav activePage={activePage} darkMode={darkMode} onToggleDark={() => setDarkMode((d) => !d)} />
 
       <BackToTop />
+      <NetworkStatusBanner />
       <main className="ml-64 pt-24 px-10 pb-12 min-h-screen">
         {!appReady ? (
           <AppSkeleton />
