@@ -5,6 +5,7 @@ import { TopEarnersWidget } from "../components/TopEarnersWidget";
 import { LeaveTrackerWidget } from "../components/LeaveTrackerWidget";
 import { TeamHeadcountWidget } from "../components/TeamHeadcountWidget";
 import { MonthlyTargetWidget } from "../components/MonthlyTargetWidget";
+import { UpcomingPaydayBanner } from "../components/UpcomingPaydayBanner";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -425,6 +426,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
   <div className="space-y-10">
     {/* Onboarding */}
     <OnboardingBanner />
+
+    {/* Payday countdown */}
+    <UpcomingPaydayBanner />
 
     {/* Budget alert */}
     <BudgetAlertBanner totalPayroll={452890} />
