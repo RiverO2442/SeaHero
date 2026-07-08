@@ -11,6 +11,7 @@ import ReportsPage from "./pages/ReportsPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import BackToTop from "./components/BackToTop";
 import { NetworkStatusBanner } from "./components/NetworkStatusBanner";
+import { CommandPalette } from "./components/CommandPalette";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
@@ -52,6 +53,7 @@ function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     try { return localStorage.getItem("settings_darkMode") === "true"; } catch { return false; }
   });
+  const [cmdOpen, setCmdOpen] = useState(false);
   const [pageKey, setPageKey] = useState(0);
   const [appReady, setAppReady] = useState(false);
   const prevPage = useRef<Page>("dashboard");
@@ -94,6 +96,17 @@ function App() {
   }, [handleGSequence]);
 
   useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdOpen(v => !v);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("settings_darkMode", String(darkMode));
   }, [darkMode]);
@@ -118,6 +131,7 @@ function App() {
 
       <BackToTop />
       <NetworkStatusBanner />
+      <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} onNavigate={navigate} />
       <main className="ml-64 pt-24 px-10 pb-12 min-h-screen">
         {!appReady ? (
           <AppSkeleton />
