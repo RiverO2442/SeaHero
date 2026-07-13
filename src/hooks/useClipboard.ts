@@ -1,32 +1,31 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 interface UseClipboardResult {
-  copy: (text: string) => Promise<void>;
+  copy: (text: string, key?: string) => Promise<void>;
   copied: boolean;
+  copiedKey: string | null;
 }
 
 export function useClipboard(resetMs = 2000): UseClipboardResult {
-  const [copied, setCopied] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const copy = useCallback(async (text: string) => {
+  const copy = useCallback(async (text: string, key = "__default__") => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), resetMs);
     } catch {
-      // Fallback for older browsers
       const el = document.createElement("textarea");
       el.value = text;
-      el.style.position = "fixed";
-      el.style.opacity = "0";
+      el.style.cssText = "position:fixed;opacity:0";
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
       document.body.removeChild(el);
-      setCopied(true);
-      setTimeout(() => setCopied(false), resetMs);
     }
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setCopiedKey(key);
+    timerRef.current = setTimeout(() => setCopiedKey(null), resetMs);
   }, [resetMs]);
 
-  return { copy, copied };
+  return { copy, copied: copiedKey !== null, copiedKey };
 }

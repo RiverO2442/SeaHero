@@ -3,6 +3,7 @@ import { mergeStoredEmployees } from "../utils/employeeStore";
 import { EmployeeProfileDrawer } from "../components/EmployeeProfileDrawer";
 import type { DrawerEmployee } from "../components/EmployeeProfileDrawer";
 import { EmployeeNotepad } from "../components/EmployeeNotepad";
+import { useClipboard } from "../hooks/useClipboard";
 
 const PER_PAGE = 5;
 
@@ -555,6 +556,7 @@ const EmployeeDirectoryPage: React.FC = () => {
       return SEED_EMPLOYEES;
     }
   });
+  const { copy, copiedKey } = useClipboard();
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
@@ -990,11 +992,13 @@ const EmployeeDirectoryPage: React.FC = () => {
                           <span className="material-symbols-outlined">account_circle</span>
                         </button>
                         <button
-                          onClick={() => { navigator.clipboard.writeText(emp.email); }}
-                          title="Copy email"
-                          className="p-2 hover:bg-slate-100 hover:text-blue-500 rounded-lg text-slate-400 transition-colors"
+                          onClick={() => copy(emp.email, emp.id)}
+                          title={copiedKey === emp.id ? "Copied!" : "Copy email"}
+                          className={`p-2 rounded-lg transition-colors ${copiedKey === emp.id ? "bg-emerald-50 text-emerald-500" : "hover:bg-slate-100 hover:text-blue-500 text-slate-400"}`}
                         >
-                          <span className="material-symbols-outlined">content_copy</span>
+                          <span className="material-symbols-outlined">
+                            {copiedKey === emp.id ? "check" : "content_copy"}
+                          </span>
                         </button>
                         <button
                           onClick={() => setNoteEmployee(emp)}
