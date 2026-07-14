@@ -4,6 +4,8 @@ import { EmployeeProfileDrawer } from "../components/EmployeeProfileDrawer";
 import type { DrawerEmployee } from "../components/EmployeeProfileDrawer";
 import { EmployeeNotepad } from "../components/EmployeeNotepad";
 import { useClipboard } from "../hooks/useClipboard";
+import { ContractTypeTag } from "../components/ContractTypeTag";
+import type { ContractType } from "../components/ContractTypeTag";
 
 const PER_PAGE = 5;
 
@@ -22,6 +24,7 @@ interface DirectoryEmployee {
   role: string;
   dailyWage: number;
   status: EmployeeStatus;
+  contractType?: ContractType;
 }
 
 interface NewEmployeeForm {
@@ -51,6 +54,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
     id: "1",
     name: "Marcus Chen",
     email: "marcus.c@salarypro.com",
+    contractType: "Full-time" as ContractType,
     avatarUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCYGVAPvh6BIuk9IJq1VylviVSpQeL877-BFIqF3TxNsIrsJ8TC9ER79KyNRcA5Mk-WZTmBebvTsIr3l7c-wHvH7kkVCi8OLI8AjwItZ5-i4vBVTdsCWm6L9Gz_4ld74MaSHzvC-smGur7CdFEJfvactyoL4LwD-iUtay2_4t8O9DS9K6_1VI8S_c1ctLf4npEqlFKhzLJmrMQPHG_-YkvGhcVJsbWSAjzrrBQM7TKPAY0fKvN4gXZL7Hkukjz2m9xbAauC7aamMME",
     department: "Engineering",
@@ -63,6 +67,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
     id: "2",
     name: "Sarah Jenkins",
     email: "s.jenkins@salarypro.com",
+    contractType: "Full-time" as ContractType,
     avatarUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDrms5ZEBNnbfK7FKAW_-4HL4XUBj7-QUMq8sDYUEl-qjbliqRU5rg2Ho4CmYr-Fg-N1aGpavjyzvuALm3jN9tzAoTCWeCGWpjoQN7KSVIXgslksl2iNE_qchJFCJGTcX5HB6VyBRClUGnJrfh9Tz-W1oeQdBxPkMBOPIWyLMozLbyMDkTWemVcRU9tRzhkoNsq6ktzXopfwEowy8hyPFeMzMQKH7gFcAVWLinjIBz5GGfP4Qrif1aqKO1YfaVOzFVF5kT1ITH0GCQ",
     department: "Product Design",
@@ -79,6 +84,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCfI2RZuBiZ9koaWo2Kp_s5jDumAEe76wkP0vaOiO2GxcbklMlpDp6H6cMcLCfOnag7bBTFno-6OX3jIzlWBxEGxvulPFienHzKAcTl5LULgydRzSgROIS2dwJbJB0HZcvMQ5zMa6tcShA6oq-PaON_ZH1yZKrWmL4PR12Rh7P4BBIw4Yb7TPXQ3KLj_DdPxQGFeCE8OfuXCTAvVoFgUtzaDKKydtLpO37W7Vx66n-86zKehbC9DgJ-P8RXQyvofT8kjOdss2WBGdc",
     department: "Engineering",
     departmentColor: DEPT_COLORS["Engineering"],
+    contractType: "Contract" as ContractType,
     role: "DevOps Specialist",
     dailyWage: 390,
     status: "Active",
@@ -91,6 +97,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuB3dlKFvoJMFbdcnp9-EkkFvfndz17UxHSR2znrjHKKbcw4I22HwfYA5fJWMLpBLg-KUjE-trA3YpG1ocnX6gEtUM6HwirGTLO3fcHOU-UYUD919LwsH4frc4CbR_lDmJNK-nbVfGXhl1ZeRLYCB8WYT5417zw76JrU38MDAr_pyBqbe-D071c8hDbjNLP8NjvBp0uIXfEbtyZfftd70qLooZFPvgtjWHadsDyxADdv6HN7OSEXdKqO-9WImDKAOz9LKRn7fDRRF7Y",
     department: "Operations",
     departmentColor: DEPT_COLORS["Operations"],
+    contractType: "Part-time" as ContractType,
     role: "Logistics Manager",
     dailyWage: 310,
     status: "Inactive",
@@ -103,6 +110,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBQLeixBONhkcRMUWdvzUGHp_R6hZkbdaVvLIRXE24-U41WsASuznLQ3UL_kKZTdQb_auUvLJDTMxtStGxbBEvO-yTTeL47daS4sS-r95HKzZnRH9Z2QhI_fSe_3QSPn-U6JGktAzUlN53F6PEDeNH7Uupgz9xQEedfnSottccn3ST3NBsgTrkBVXH7M1JNZGfTzs2fDhAzC3I9KYZG79UKCtpLj3iT_yRFPCJIc70HpTVHui6NfNoGczP7wZRR_Ujnist8lY0zUBg",
     department: "Marketing",
     departmentColor: DEPT_COLORS["Marketing"],
+    contractType: "Intern" as ContractType,
     role: "Content Lead",
     dailyWage: 280,
     status: "Active",
@@ -565,6 +573,7 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [profileEmployee, setProfileEmployee] = useState<DrawerEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [noteEmployee, setNoteEmployee] = useState<DirectoryEmployee | null>(null);
+  const [view, setView] = useState<"list" | "grid">("list");
 
   const handleSaveEmployee = (emp: DirectoryEmployee) => {
     setEmployees((prev) => {
@@ -723,7 +732,20 @@ const EmployeeDirectoryPage: React.FC = () => {
             Manage your workforce, roles, and compensation details.
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
+          {/* List / Grid toggle */}
+          <div className="flex bg-slate-100 p-1 rounded-lg">
+            {(["list", "grid"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                title={v === "list" ? "List view" : "Grid view"}
+                className={`p-1.5 rounded-md transition-all ${view === v ? "bg-white shadow-sm text-slate-800" : "text-slate-400 hover:text-slate-600"}`}
+              >
+                <span className="material-symbols-outlined text-lg">{v === "list" ? "table_rows" : "grid_view"}</span>
+              </button>
+            ))}
+          </div>
           <button
             onClick={() => exportEmployeesCSV(filtered.length > 0 ? filtered : employees)}
             className="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-lg flex items-center gap-2 font-semibold hover:bg-slate-50 transition-colors shadow-sm"
@@ -848,8 +870,69 @@ const EmployeeDirectoryPage: React.FC = () => {
         </div>
       )}
 
+      {/* Grid view */}
+      {view === "grid" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-2">
+          {paginated.length === 0 ? (
+            <div className="col-span-3 text-center py-12 text-slate-400 text-sm">
+              <span className="material-symbols-outlined text-3xl block mb-2">search_off</span>
+              No employees match the current filters.
+            </div>
+          ) : paginated.map((emp) => (
+            <div key={emp.id} className={`bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow relative group ${selectedIds.has(emp.id) ? "ring-2 ring-blue-400" : ""}`}>
+              <div className="flex items-start gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(emp.id)}
+                  onChange={() => toggleSelect(emp.id)}
+                  className="w-4 h-4 accent-blue-600 cursor-pointer mt-1 shrink-0"
+                />
+                {emp.avatarUrl ? (
+                  <img src={emp.avatarUrl} alt={emp.name} className="w-12 h-12 rounded-full object-cover shrink-0" />
+                ) : (
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold ${emp.departmentColor} shrink-0`}>
+                    {emp.initials ?? emp.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-slate-800 truncate">{emp.name}</p>
+                  <p className="text-xs text-slate-500 truncate">{emp.email}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${emp.departmentColor}`}>{emp.department}</span>
+                {emp.contractType && <ContractTypeTag type={emp.contractType} />}
+              </div>
+              <p className="text-xs text-slate-500 mb-2 truncate">{emp.role}</p>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-800">${emp.dailyWage.toFixed(2)}<span className="text-xs font-normal text-slate-400">/day</span></span>
+                <StatusBadge status={emp.status} />
+              </div>
+              <div className="flex gap-1 mt-3 pt-3 border-t border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => setProfileEmployee(emp)} title="View profile" className="p-1.5 hover:bg-blue-50 hover:text-blue-500 rounded-lg text-slate-400 transition-colors"><span className="material-symbols-outlined text-sm">account_circle</span></button>
+                <button onClick={() => copy(emp.email, emp.id)} title={copiedKey === emp.id ? "Copied!" : "Copy email"} className={`p-1.5 rounded-lg transition-colors ${copiedKey === emp.id ? "bg-emerald-50 text-emerald-500" : "hover:bg-slate-100 text-slate-400"}`}><span className="material-symbols-outlined text-sm">{copiedKey === emp.id ? "check" : "content_copy"}</span></button>
+                <button onClick={() => setNoteEmployee(emp)} title="Notes" className="p-1.5 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors"><span className="material-symbols-outlined text-sm">sticky_note_2</span></button>
+                <button onClick={() => setEditEmployee(emp)} className="p-1.5 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors"><span className="material-symbols-outlined text-sm">edit</span></button>
+                <button onClick={() => setDeleteConfirm(emp.id)} className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-lg text-slate-400 transition-colors"><span className="material-symbols-outlined text-sm">delete</span></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Grid pagination */}
+      {view === "grid" && totalPages > 1 && (
+        <div className="flex justify-end gap-1 items-center">
+          <button disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1 text-sm font-bold text-slate-600 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Previous</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button key={p} onClick={() => setPage(p)} className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${p === page ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}>{p}</button>
+          ))}
+          <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1 text-sm font-bold text-slate-600 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next</button>
+        </div>
+      )}
+
       {/* Table */}
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+      {view === "list" && <div className="bg-white rounded-xl overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50">
@@ -876,7 +959,7 @@ const EmployeeDirectoryPage: React.FC = () => {
                   className="w-4 h-4 accent-blue-600 cursor-pointer"
                 />
               </th>
-              {(["Employee Name", "Department", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
+              {(["Employee Name", "Department", "Contract", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
                 const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : col === "Role" ? "role" : null;
                 const isActive = sortField === field;
                 return (
@@ -902,7 +985,7 @@ const EmployeeDirectoryPage: React.FC = () => {
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-6 py-12 text-center text-slate-400 text-sm"
                 >
                   <span className="material-symbols-outlined text-3xl block mb-2">
@@ -956,6 +1039,11 @@ const EmployeeDirectoryPage: React.FC = () => {
                     >
                       {emp.department}
                     </span>
+                  </td>
+
+                  {/* Contract type */}
+                  <td className="px-6 py-4">
+                    <ContractTypeTag type={emp.contractType ?? "Full-time"} />
                   </td>
 
                   {/* Role */}
@@ -1053,7 +1141,7 @@ const EmployeeDirectoryPage: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* Analytics cards */}
       <AnalyticsCards employees={employees} />
