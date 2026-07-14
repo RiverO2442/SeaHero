@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DateRangePicker } from "../components/DateRangePicker";
 import type { DateRange } from "../components/DateRangePicker";
 import { ExportFormatModal } from "../components/ExportFormatModal";
+import { DepartmentBudgetTable } from "../components/DepartmentBudgetTable";
 
 interface ReportDef {
   id: string;
@@ -101,6 +102,9 @@ const ReportsPage: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* Department budget breakdown */}
+      <DepartmentBudgetTable />
 
       {/* Report cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
