@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { RingProgress } from "../components/RingProgress";
+import { SalaryBandChart } from "../components/SalaryBandChart";
 
 const DEPT_DATA = [
   { dept: "Engineering", headcount: 42, avgWage: 420, budget: 17640, color: "#2563eb", ring: "#2563eb" },
@@ -254,6 +255,9 @@ const AnalyticsPage: React.FC = () => {
           })()}
         </div>
       </section>
+
+      {/* Salary band chart */}
+      <SalaryBandChart />
 
       {/* Department comparison table */}
       <section className="bg-white rounded-xl shadow-sm overflow-hidden">
