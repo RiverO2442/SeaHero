@@ -1,6 +1,13 @@
 ﻿import React, { useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
+const THEME_OPTIONS = [
+  { value: "light", icon: "light_mode", label: "Light" },
+  { value: "dark", icon: "dark_mode", label: "Dark" },
+  { value: "system", icon: "devices", label: "System" },
+] as const;
+type ThemeOption = typeof THEME_OPTIONS[number]["value"];
+
 interface ToggleProps {
   checked: boolean;
   onChange: (v: boolean) => void;
@@ -53,6 +60,19 @@ const SettingsPage: React.FC = () => {
   const [systemAlerts, setSystemAlerts] = useLocalStorage("settings_systemAlerts", false);
   const [weeklyReport, setWeeklyReport] = useLocalStorage("settings_weeklyReport", true);
   const [saved, setSaved] = useState(false);
+  const [theme, setTheme] = useState<ThemeOption>(() => {
+    try {
+      const dark = localStorage.getItem("settings_darkMode");
+      return dark === "true" ? "dark" : "light";
+    } catch { return "light"; }
+  });
+
+  const handleTheme = (t: ThemeOption) => {
+    setTheme(t);
+    const isDark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark", isDark);
+    localStorage.setItem("settings_darkMode", String(isDark));
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -173,6 +193,33 @@ const SettingsPage: React.FC = () => {
               </div>
             ))}
           </div>
+        </Section>
+
+        {/* Appearance */}
+        <Section icon="palette" title="Appearance" subtitle="Choose your preferred colour scheme">
+          <div className="flex gap-3">
+            {THEME_OPTIONS.map((opt) => {
+              const active = theme === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => handleTheme(opt.value)}
+                  className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-all ${
+                    active
+                      ? "border-blue-600 bg-blue-50 text-blue-600"
+                      : "border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-2xl">{opt.icon}</span>
+                  <span className="text-xs font-bold">{opt.label}</span>
+                  {active && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-slate-400 mt-3">
+            "System" follows your operating system setting.
+          </p>
         </Section>
 
         {/* Danger zone */}
