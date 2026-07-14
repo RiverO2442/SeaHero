@@ -4,6 +4,7 @@ import { useToast } from "../hooks/useToast";
 import { MonthDelta } from "../components/MonthDelta";
 import { PayslipPrintModal } from "../components/PayslipPrintModal";
 import type { PayslipEntry } from "../components/PayslipPrintModal";
+import { PayRunTimeline } from "../components/PayRunTimeline";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1086,6 +1087,9 @@ const PayrollPage: React.FC = () => {
         <DeptBreakdown entries={entries} />
         <PayrollHistory />
       </section>
+
+      {/* Pay run timeline */}
+      <PayRunTimeline runs={PAYROLL_HISTORY} />
     </div>
   );
 };
