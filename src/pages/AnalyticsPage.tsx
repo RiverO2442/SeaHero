@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { RingProgress } from "../components/RingProgress";
 import { SalaryBandChart } from "../components/SalaryBandChart";
+import { TurnoverRateChart } from "../components/TurnoverRateChart";
+import { HeadcountTrendChart } from "../components/HeadcountTrendChart";
 
 const DEPT_DATA = [
   { dept: "Engineering", headcount: 42, avgWage: 420, budget: 17640, color: "#2563eb", ring: "#2563eb" },
@@ -254,6 +256,12 @@ const AnalyticsPage: React.FC = () => {
             );
           })()}
         </div>
+      </section>
+
+      {/* Workforce trends */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <HeadcountTrendChart />
+        <TurnoverRateChart />
       </section>
 
       {/* Salary band chart */}

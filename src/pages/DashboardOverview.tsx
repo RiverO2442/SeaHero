@@ -8,6 +8,10 @@ import { MonthlyTargetWidget } from "../components/MonthlyTargetWidget";
 import { UpcomingPaydayBanner } from "../components/UpcomingPaydayBanner";
 import { RecentActivityFeed } from "../components/RecentActivityFeed";
 import { OvertimeTracker } from "../components/OvertimeTracker";
+import { HolidayCalendarWidget } from "../components/HolidayCalendarWidget";
+import { BonusTrackerWidget } from "../components/BonusTrackerWidget";
+import { VacancyTrackerWidget } from "../components/VacancyTrackerWidget";
+import { HRMetricsSummaryBar } from "../components/HRMetricsSummaryBar";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -351,6 +355,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
       </div>
     </section>
 
+    {/* HR metrics summary bar */}
+    <HRMetricsSummaryBar />
+
     {/* KPI metrics */}
     <MetricCards />
 
@@ -370,6 +377,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         <TopEarnersWidget />
         <TeamHeadcountWidget />
         <OvertimeTracker />
+        <BonusTrackerWidget />
+        <VacancyTrackerWidget />
+        <HolidayCalendarWidget />
         <PromoCard />
       </div>
     </section>

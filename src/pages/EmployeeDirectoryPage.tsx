@@ -6,6 +6,9 @@ import { EmployeeNotepad } from "../components/EmployeeNotepad";
 import { useClipboard } from "../hooks/useClipboard";
 import { ContractTypeTag } from "../components/ContractTypeTag";
 import type { ContractType } from "../components/ContractTypeTag";
+import { PayGradeTag } from "../components/PayGradeTag";
+import type { PayGrade } from "../components/PayGradeTag";
+import { EmployeeOnboardingChecklist } from "../components/EmployeeOnboardingChecklist";
 
 const PER_PAGE = 5;
 
@@ -25,6 +28,7 @@ interface DirectoryEmployee {
   dailyWage: number;
   status: EmployeeStatus;
   contractType?: ContractType;
+  payGrade?: PayGrade;
 }
 
 interface NewEmployeeForm {
@@ -55,6 +59,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
     name: "Marcus Chen",
     email: "marcus.c@salarypro.com",
     contractType: "Full-time" as ContractType,
+    payGrade: "L5" as PayGrade,
     avatarUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCYGVAPvh6BIuk9IJq1VylviVSpQeL877-BFIqF3TxNsIrsJ8TC9ER79KyNRcA5Mk-WZTmBebvTsIr3l7c-wHvH7kkVCi8OLI8AjwItZ5-i4vBVTdsCWm6L9Gz_4ld74MaSHzvC-smGur7CdFEJfvactyoL4LwD-iUtay2_4t8O9DS9K6_1VI8S_c1ctLf4npEqlFKhzLJmrMQPHG_-YkvGhcVJsbWSAjzrrBQM7TKPAY0fKvN4gXZL7Hkukjz2m9xbAauC7aamMME",
     department: "Engineering",
@@ -68,6 +73,7 @@ const SEED_EMPLOYEES: DirectoryEmployee[] = [
     name: "Sarah Jenkins",
     email: "s.jenkins@salarypro.com",
     contractType: "Full-time" as ContractType,
+    payGrade: "L4" as PayGrade,
     avatarUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDrms5ZEBNnbfK7FKAW_-4HL4XUBj7-QUMq8sDYUEl-qjbliqRU5rg2Ho4CmYr-Fg-N1aGpavjyzvuALm3jN9tzAoTCWeCGWpjoQN7KSVIXgslksl2iNE_qchJFCJGTcX5HB6VyBRClUGnJrfh9Tz-W1oeQdBxPkMBOPIWyLMozLbyMDkTWemVcRU9tRzhkoNsq6ktzXopfwEowy8hyPFeMzMQKH7gFcAVWLinjIBz5GGfP4Qrif1aqKO1YfaVOzFVF5kT1ITH0GCQ",
     department: "Product Design",
@@ -573,6 +579,7 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [profileEmployee, setProfileEmployee] = useState<DrawerEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [noteEmployee, setNoteEmployee] = useState<DirectoryEmployee | null>(null);
+  const [onboardEmployee, setOnboardEmployee] = useState<DirectoryEmployee | null>(null);
   const [view, setView] = useState<"list" | "grid">("list");
 
   const handleSaveEmployee = (emp: DirectoryEmployee) => {
@@ -696,6 +703,14 @@ const EmployeeDirectoryPage: React.FC = () => {
         employee={profileEmployee}
         onClose={() => setProfileEmployee(null)}
       />
+
+      {/* Onboarding Checklist */}
+      {onboardEmployee && (
+        <EmployeeOnboardingChecklist
+          employeeName={onboardEmployee.name}
+          onClose={() => setOnboardEmployee(null)}
+        />
+      )}
 
       {/* Employee Notepad */}
       {noteEmployee && (
@@ -959,7 +974,7 @@ const EmployeeDirectoryPage: React.FC = () => {
                   className="w-4 h-4 accent-blue-600 cursor-pointer"
                 />
               </th>
-              {(["Employee Name", "Department", "Contract", "Role", "Daily Wage", "Status", ""] as const).map((col) => {
+              {(["Employee Name", "Department", "Contract", "Role", "Daily Wage", "Grade", "Status", ""] as const).map((col) => {
                 const field = col === "Employee Name" ? "name" : col === "Daily Wage" ? "dailyWage" : col === "Role" ? "role" : null;
                 const isActive = sortField === field;
                 return (
@@ -985,7 +1000,7 @@ const EmployeeDirectoryPage: React.FC = () => {
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="px-6 py-12 text-center text-slate-400 text-sm"
                 >
                   <span className="material-symbols-outlined text-3xl block mb-2">
@@ -1058,6 +1073,11 @@ const EmployeeDirectoryPage: React.FC = () => {
                     </span>
                   </td>
 
+                  {/* Pay grade */}
+                  <td className="px-6 py-4">
+                    {emp.payGrade ? <PayGradeTag grade={emp.payGrade} /> : <span className="text-slate-300 text-xs">—</span>}
+                  </td>
+
                   {/* Status */}
                   <td className="px-6 py-4">
                     <StatusBadge status={emp.status} />
@@ -1094,6 +1114,13 @@ const EmployeeDirectoryPage: React.FC = () => {
                           className="p-2 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors"
                         >
                           <span className="material-symbols-outlined">sticky_note_2</span>
+                        </button>
+                        <button
+                          onClick={() => setOnboardEmployee(emp)}
+                          title="Onboarding checklist"
+                          className="p-2 hover:bg-emerald-50 hover:text-emerald-500 rounded-lg text-slate-400 transition-colors"
+                        >
+                          <span className="material-symbols-outlined">checklist</span>
                         </button>
                         <button onClick={() => setEditEmployee(emp)} className="p-2 hover:bg-amber-50 hover:text-amber-500 rounded-lg text-slate-400 transition-colors">
                           <span className="material-symbols-outlined">edit</span>
