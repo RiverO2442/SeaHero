@@ -10,13 +10,14 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import LeaveManagementPage from "./pages/LeaveManagementPage";
+import RecruitmentPage from "./pages/RecruitmentPage";
 import BackToTop from "./components/BackToTop";
 import { NetworkStatusBanner } from "./components/NetworkStatusBanner";
 import { CommandPalette } from "./components/CommandPalette";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
 
-export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "audit-log" | "leave" | "settings";
+export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "audit-log" | "leave" | "recruitment" | "settings";
 
 // ─── App-wide splash skeleton ─────────────────────────────────────────────────
 const AppSkeleton: React.FC = () => (
@@ -146,6 +147,7 @@ function App() {
             {activePage === "reports" && <ReportsPage />}
             {activePage === "audit-log" && <AuditLogPage />}
             {activePage === "leave" && <LeaveManagementPage />}
+            {activePage === "recruitment" && <RecruitmentPage />}
             {activePage === "settings" && <SettingsPage />}
           </div>
         )}

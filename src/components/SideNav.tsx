@@ -16,6 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "summarize", label: "Reports", page: "reports" },
   { icon: "history", label: "Audit Log", page: "audit-log" },
   { icon: "calendar_month", label: "Leave", page: "leave" },
+  { icon: "work", label: "Recruitment", page: "recruitment" },
   { icon: "settings", label: "Settings", page: "settings" },
 ];
 
