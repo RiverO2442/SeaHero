@@ -5,6 +5,7 @@ import { MonthDelta } from "../components/MonthDelta";
 import { PayslipPrintModal } from "../components/PayslipPrintModal";
 import type { PayslipEntry } from "../components/PayslipPrintModal";
 import { PayRunTimeline } from "../components/PayRunTimeline";
+import { SalaryCalculatorModal } from "../components/SalaryCalculatorModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -912,6 +913,7 @@ const PayrollPage: React.FC = () => {
   const [period, setPeriod] = useState("October 2026");
   const [statusFilter, setStatusFilter] = useState<PayrollStatus | "All">("All");
   const [nameSearch, setNameSearch] = useState("");
+  const [showCalc, setShowCalc] = useState(false);
   const toast = useToast();
 
   const visibleEntries = entries.filter((e) => {
@@ -957,6 +959,7 @@ const PayrollPage: React.FC = () => {
 
   return (
     <div className="space-y-10">
+      {showCalc && <SalaryCalculatorModal onClose={() => setShowCalc(false)} />}
       {/* Page header */}
       <section className="flex justify-between items-end">
         <div>
@@ -978,6 +981,13 @@ const PayrollPage: React.FC = () => {
             </select>
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-sm">expand_more</span>
           </div>
+          <button
+            onClick={() => setShowCalc(true)}
+            className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">calculate</span>
+            Salary Calculator
+          </button>
           <button
             onClick={handleExportCsv}
             className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors flex items-center gap-2"
