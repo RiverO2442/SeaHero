@@ -9,6 +9,8 @@ import type { ContractType } from "../components/ContractTypeTag";
 import { PayGradeTag } from "../components/PayGradeTag";
 import type { PayGrade } from "../components/PayGradeTag";
 import { EmployeeOnboardingChecklist } from "../components/EmployeeOnboardingChecklist";
+import { TeamOrgChart } from "../components/TeamOrgChart";
+import { EmployeeComparisonModal } from "../components/EmployeeComparisonModal";
 
 const PER_PAGE = 5;
 
@@ -580,6 +582,8 @@ const EmployeeDirectoryPage: React.FC = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [noteEmployee, setNoteEmployee] = useState<DirectoryEmployee | null>(null);
   const [onboardEmployee, setOnboardEmployee] = useState<DirectoryEmployee | null>(null);
+  const [compareA, setCompareA] = useState<DirectoryEmployee | null>(null);
+  const [compareB, setCompareB] = useState<DirectoryEmployee | null>(null);
   const [view, setView] = useState<"list" | "grid">("list");
 
   const handleSaveEmployee = (emp: DirectoryEmployee) => {
@@ -703,6 +707,15 @@ const EmployeeDirectoryPage: React.FC = () => {
         employee={profileEmployee}
         onClose={() => setProfileEmployee(null)}
       />
+
+      {/* Employee Comparison Modal */}
+      {compareA && compareB && (
+        <EmployeeComparisonModal
+          empA={compareA}
+          empB={compareB}
+          onClose={() => { setCompareA(null); setCompareB(null); }}
+        />
+      )}
 
       {/* Onboarding Checklist */}
       {onboardEmployee && (
@@ -872,6 +885,19 @@ const EmployeeDirectoryPage: React.FC = () => {
       {someSelected && (
         <div className="mb-4 px-4 py-3 bg-blue-600 text-white rounded-xl flex items-center gap-4 shadow-lg shadow-blue-200">
           <span className="text-sm font-bold">{selectedIds.size} employee{selectedIds.size > 1 ? "s" : ""} selected</span>
+          {selectedIds.size === 2 && (
+            <button
+              onClick={() => {
+                const [idA, idB] = Array.from(selectedIds);
+                setCompareA(employees.find((e) => e.id === idA) ?? null);
+                setCompareB(employees.find((e) => e.id === idB) ?? null);
+              }}
+              className="px-4 py-1.5 bg-white text-blue-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 hover:bg-blue-50"
+            >
+              <span className="material-symbols-outlined text-sm">compare</span>
+              Compare
+            </button>
+          )}
           <button
             onClick={handleBulkDelete}
             className="ml-auto px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5"
@@ -1172,6 +1198,11 @@ const EmployeeDirectoryPage: React.FC = () => {
 
       {/* Analytics cards */}
       <AnalyticsCards employees={employees} />
+
+      {/* Org Chart */}
+      <div className="mt-10">
+        <TeamOrgChart />
+      </div>
     </>
   );
 };
