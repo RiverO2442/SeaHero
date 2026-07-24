@@ -3,6 +3,7 @@ import { DateRangePicker } from "../components/DateRangePicker";
 import type { DateRange } from "../components/DateRangePicker";
 import { ExportFormatModal } from "../components/ExportFormatModal";
 import { DepartmentBudgetTable } from "../components/DepartmentBudgetTable";
+import { EnhancedReportCharts } from "../components/EnhancedReportCharts";
 
 interface ReportDef {
   id: string;
@@ -102,6 +103,9 @@ const ReportsPage: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* Enhanced payroll + dept charts */}
+      <EnhancedReportCharts />
 
       {/* Department budget breakdown */}
       <DepartmentBudgetTable />
