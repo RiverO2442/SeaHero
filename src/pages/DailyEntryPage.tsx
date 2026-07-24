@@ -1,6 +1,7 @@
 ﻿import React, { useState } from "react";
 import { AttendanceHeatmap } from "../components/AttendanceHeatmap";
 import { ShiftScheduleGrid } from "../components/ShiftScheduleGrid";
+import { TimeTrackingWidget } from "../components/TimeTrackingWidget";
 import { KpiCards } from "../components/KpiCards";
 import { AttendanceTable } from "../components/AttendanceTable";
 import {
@@ -286,6 +287,11 @@ const DailyEntryPage: React.FC = () => {
       {/* Attendance heatmap */}
       <section className="mt-8">
         <AttendanceHeatmap />
+      </section>
+
+      {/* Time tracker */}
+      <section className="mt-8 max-w-sm">
+        <TimeTrackingWidget />
       </section>
     </>
   );
