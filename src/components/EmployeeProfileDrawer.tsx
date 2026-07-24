@@ -1,5 +1,65 @@
 import React from "react";
 
+type Proficiency = "Expert" | "Advanced" | "Intermediate" | "Beginner";
+
+const PROF_COLOR: Record<Proficiency, string> = {
+  Expert:       "bg-blue-600 text-white",
+  Advanced:     "bg-blue-100 text-blue-700",
+  Intermediate: "bg-slate-200 text-slate-700",
+  Beginner:     "bg-slate-100 text-slate-500",
+};
+
+const DEPT_SKILLS: Record<string, Array<{ name: string; level: Proficiency }>> = {
+  Engineering:    [{ name: "React", level: "Expert" }, { name: "TypeScript", level: "Advanced" }, { name: "Node.js", level: "Intermediate" }, { name: "AWS", level: "Beginner" }],
+  "Product Design":[{ name: "Figma", level: "Expert" }, { name: "User Research", level: "Advanced" }, { name: "Prototyping", level: "Expert" }, { name: "CSS", level: "Intermediate" }],
+  Operations:     [{ name: "Process Mapping", level: "Advanced" }, { name: "ERP", level: "Intermediate" }, { name: "Logistics", level: "Expert" }, { name: "Excel", level: "Advanced" }],
+  Marketing:      [{ name: "Content Strategy", level: "Advanced" }, { name: "SEO", level: "Intermediate" }, { name: "Analytics", level: "Beginner" }, { name: "Copywriting", level: "Expert" }],
+  Finance:        [{ name: "IFRS", level: "Expert" }, { name: "Excel", level: "Expert" }, { name: "SAP", level: "Advanced" }, { name: "FP&A", level: "Intermediate" }],
+  HR:             [{ name: "Recruitment", level: "Advanced" }, { name: "HRIS", level: "Intermediate" }, { name: "Labour Law", level: "Expert" }, { name: "L&D", level: "Beginner" }],
+};
+
+const SkillMatrix: React.FC<{ department: string }> = ({ department }) => {
+  const skills = DEPT_SKILLS[department] ?? [];
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {skills.map((s) => (
+        <span key={s.name} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${PROF_COLOR[s.level]}`}>
+          {s.name}
+          <span className="opacity-70 font-normal text-[9px]">{s.level[0]}</span>
+        </span>
+      ))}
+    </div>
+  );
+};
+
+interface Goal {
+  label: string;
+  progress: number;
+  color: string;
+}
+
+const GOALS: Goal[] = [
+  { label: "Q3 OKR — Ship v2 feature set", progress: 82, color: "bg-blue-500" },
+  { label: "Learning — AWS cert",           progress: 55, color: "bg-purple-500" },
+  { label: "Team NPS > 8.0",                progress: 70, color: "bg-emerald-500" },
+];
+
+const GoalTracker: React.FC = () => (
+  <div className="space-y-3">
+    {GOALS.map((g) => (
+      <div key={g.label}>
+        <div className="flex justify-between items-center mb-1">
+          <p className="text-xs text-slate-600 leading-tight">{g.label}</p>
+          <span className="text-xs font-bold text-slate-700">{g.progress}%</span>
+        </div>
+        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div className={`h-full rounded-full ${g.color}`} style={{ width: `${g.progress}%` }} />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export interface DrawerEmployee {
   id: string;
   name: string;
@@ -113,6 +173,16 @@ export const EmployeeProfileDrawer: React.FC<EmployeeProfileDrawerProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="px-6 py-5 border-t border-slate-100">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Skills</p>
+          <SkillMatrix department={employee.department} />
+        </div>
+
+        <div className="px-6 py-5 border-t border-slate-100">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Goals (OKRs)</p>
+          <GoalTracker />
         </div>
 
         <div className="px-6 pb-8 mt-auto flex gap-3">
