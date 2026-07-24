@@ -6,6 +6,7 @@ import { PayslipPrintModal } from "../components/PayslipPrintModal";
 import type { PayslipEntry } from "../components/PayslipPrintModal";
 import { PayRunTimeline } from "../components/PayRunTimeline";
 import { SalaryCalculatorModal } from "../components/SalaryCalculatorModal";
+import { PayrollTaxBreakdown } from "../components/PayrollTaxBreakdown";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1100,6 +1101,9 @@ const PayrollPage: React.FC = () => {
 
       {/* Pay run timeline */}
       <PayRunTimeline runs={PAYROLL_HISTORY} />
+
+      {/* Tax breakdown */}
+      <PayrollTaxBreakdown />
     </div>
   );
 };
