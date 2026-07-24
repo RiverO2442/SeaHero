@@ -12,6 +12,8 @@ import { HolidayCalendarWidget } from "../components/HolidayCalendarWidget";
 import { BonusTrackerWidget } from "../components/BonusTrackerWidget";
 import { VacancyTrackerWidget } from "../components/VacancyTrackerWidget";
 import { HRMetricsSummaryBar } from "../components/HRMetricsSummaryBar";
+import { WorkAnniversaryWidget } from "../components/WorkAnniversaryWidget";
+import { TrainingTrackerWidget } from "../components/TrainingTrackerWidget";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -379,6 +381,8 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         <OvertimeTracker />
         <BonusTrackerWidget />
         <VacancyTrackerWidget />
+        <WorkAnniversaryWidget />
+        <TrainingTrackerWidget />
         <HolidayCalendarWidget />
         <PromoCard />
       </div>
