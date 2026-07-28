@@ -14,6 +14,9 @@ import { VacancyTrackerWidget } from "../components/VacancyTrackerWidget";
 import { HRMetricsSummaryBar } from "../components/HRMetricsSummaryBar";
 import { WorkAnniversaryWidget } from "../components/WorkAnniversaryWidget";
 import { TrainingTrackerWidget } from "../components/TrainingTrackerWidget";
+import { EmployeeSentimentWidget } from "../components/EmployeeSentimentWidget";
+import { ProbationTrackerWidget } from "../components/ProbationTrackerWidget";
+import { EmployeeNPSWidget } from "../components/EmployeeNPSWidget";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -383,6 +386,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         <VacancyTrackerWidget />
         <WorkAnniversaryWidget />
         <TrainingTrackerWidget />
+        <EmployeeSentimentWidget />
+        <ProbationTrackerWidget />
+        <EmployeeNPSWidget />
         <HolidayCalendarWidget />
         <PromoCard />
       </div>
