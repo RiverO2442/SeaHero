@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SuccessionPlanningPanel } from "../components/SuccessionPlanningPanel";
 
 interface ReviewEmployee {
   id: string;
@@ -131,6 +132,9 @@ const PerformanceReviewPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Succession planning */}
+      <SuccessionPlanningPanel />
 
       {/* Employee review cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
