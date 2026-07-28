@@ -4,6 +4,7 @@ import type { DateRange } from "../components/DateRangePicker";
 import { ExportFormatModal } from "../components/ExportFormatModal";
 import { DepartmentBudgetTable } from "../components/DepartmentBudgetTable";
 import { EnhancedReportCharts } from "../components/EnhancedReportCharts";
+import { PayEquityReport } from "../components/PayEquityReport";
 
 interface ReportDef {
   id: string;
@@ -109,6 +110,9 @@ const ReportsPage: React.FC = () => {
 
       {/* Department budget breakdown */}
       <DepartmentBudgetTable />
+
+      {/* Pay equity analysis */}
+      <PayEquityReport />
 
       {/* Report cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
