@@ -1,4 +1,5 @@
 import React from "react";
+import { DocumentVaultWidget } from "./DocumentVaultWidget";
 
 type Proficiency = "Expert" | "Advanced" | "Intermediate" | "Beginner";
 
@@ -184,6 +185,8 @@ export const EmployeeProfileDrawer: React.FC<EmployeeProfileDrawerProps> = ({
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Goals (OKRs)</p>
           <GoalTracker />
         </div>
+
+        <DocumentVaultWidget />
 
         <div className="px-6 pb-8 mt-auto flex gap-3">
           <button
