@@ -1,7 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 type LeaveType = "Annual" | "Sick" | "Maternity" | "Paternity" | "Unpaid";
 type LeaveStatus = "Pending" | "Approved" | "Rejected";
+
+// ─── Calendar View ─────────────────────────────────────────────────────────────
+function LeaveCalendarView({ requests }: { requests: LeaveRequest[] }) {
+  const today = new Date();
+  const [calYear, setCalYear] = useState(today.getFullYear());
+  const [calMonth, setCalMonth] = useState(today.getMonth());
+
+  const TYPE_BAR: Record<LeaveType, string> = {
+    Annual:    "bg-blue-400",
+    Sick:      "bg-rose-400",
+    Maternity: "bg-purple-400",
+    Paternity: "bg-cyan-400",
+    Unpaid:    "bg-slate-400",
+  };
+
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const firstDow = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+  const startOffset = (firstDow + 6) % 7; // Mon-first
+
+  const cellLeaves = useMemo(() => {
+    const map: Record<number, { name: string; type: LeaveType; status: LeaveStatus }[]> = {};
+    requests.forEach(r => {
+      const from = new Date(r.from);
+      const to   = new Date(r.to);
+      for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+        if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
+          const day = d.getDate();
+          if (!map[day]) map[day] = [];
+          map[day].push({ name: r.employeeName, type: r.type, status: r.status });
+        }
+      }
+    });
+    return map;
+  }, [requests, calYear, calMonth]);
+
+  const prevMonth = () => { if (calMonth === 0) { setCalYear(y => y - 1); setCalMonth(11); } else setCalMonth(m => m - 1); };
+  const nextMonth = () => { if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0); } else setCalMonth(m => m + 1); };
+
+  const monthLabel = new Date(calYear, calMonth, 1).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  const cells = Array.from({ length: startOffset + daysInMonth }, (_, i) => i < startOffset ? null : i - startOffset + 1);
+
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <span className="material-symbols-outlined text-slate-500">chevron_left</span>
+        </button>
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">{monthLabel}</h3>
+        <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <span className="material-symbols-outlined text-slate-500">chevron_right</span>
+        </button>
+      </div>
+      <div className="p-4">
+        <div className="grid grid-cols-7 mb-1">
+          {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d => (
+            <div key={d} className="text-center text-xs font-semibold text-slate-400 py-1">{d}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {cells.map((day, idx) => {
+            if (day === null) return <div key={`empty-${idx}`} />;
+            const leaves = cellLeaves[day] ?? [];
+            const isToday = day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+            return (
+              <div key={day} className={`min-h-[72px] rounded-lg p-1.5 border ${isToday ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20" : "border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/30"}`}>
+                <span className={`text-xs font-semibold block mb-1 ${isToday ? "text-blue-600" : "text-slate-600 dark:text-slate-400"}`}>{day}</span>
+                <div className="space-y-0.5">
+                  {leaves.slice(0, 3).map((l, li) => (
+                    <div key={li} title={`${l.name} — ${l.type} (${l.status})`}
+                      className={`text-[9px] font-medium text-white px-1 py-0.5 rounded truncate ${TYPE_BAR[l.type]} ${l.status === "Pending" ? "opacity-60" : ""}`}>
+                      {l.name.split(" ")[0]}
+                    </div>
+                  ))}
+                  {leaves.length > 3 && (
+                    <div className="text-[9px] text-slate-400 pl-1">+{leaves.length - 3} more</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex gap-4 mt-4 flex-wrap">
+          {(["Annual","Sick","Maternity","Paternity","Unpaid"] as LeaveType[]).map(t => (
+            <span key={t} className="flex items-center gap-1.5 text-xs text-slate-500">
+              <span className={`w-3 h-3 rounded-sm ${TYPE_BAR[t]}`} />{t}
+            </span>
+          ))}
+          <span className="flex items-center gap-1.5 text-xs text-slate-500 ml-4">
+            <span className="w-3 h-3 rounded-sm bg-blue-400 opacity-60" />Pending (faded)
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface LeaveRequest {
   id: string;
@@ -63,6 +158,7 @@ const LeaveManagementPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<"All" | LeaveType>("All");
   const [statusFilter, setStatusFilter] = useState<"All" | LeaveStatus>("All");
   const [search, setSearch] = useState("");
+  const [view, setView] = useState<"table" | "calendar">("table");
 
   const approve = (id: string) =>
     setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status: "Approved" } : r)));
@@ -91,16 +187,27 @@ const LeaveManagementPage: React.FC = () => {
             Review, approve, and track employee leave requests.
           </p>
         </div>
-        <div className="flex gap-2 text-xs font-bold">
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 text-amber-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{pending} Pending
-          </span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{approved} Approved
-          </span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />{rejected} Rejected
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2 text-xs font-bold">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 text-amber-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{pending} Pending
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{approved} Approved
+            </span>
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />{rejected} Rejected
+            </span>
+          </div>
+          <div className="flex rounded-lg overflow-hidden border border-slate-200">
+            {(["table","calendar"] as const).map(v => (
+              <button key={v} onClick={() => setView(v)}
+                className={`px-3 py-1.5 text-xs font-semibold flex items-center gap-1 transition-colors ${view === v ? "bg-blue-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}>
+                <span className="material-symbols-outlined text-sm">{v === "table" ? "table_rows" : "calendar_month"}</span>
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -129,6 +236,9 @@ const LeaveManagementPage: React.FC = () => {
         })}
       </div>
 
+      {view === "calendar" && <LeaveCalendarView requests={requests} />}
+
+      {view === "table" && <>
       {/* Filter bar */}
       <div className="bg-slate-100 rounded-xl p-4 mb-6 flex flex-wrap items-center gap-4">
         {/* Search */}
@@ -267,6 +377,7 @@ const LeaveManagementPage: React.FC = () => {
           </p>
         </div>
       </div>
+      </>}
     </>
   );
 };
