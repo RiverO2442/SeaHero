@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { SuccessionPlanningPanel } from "../components/SuccessionPlanningPanel";
+import { GoalSettingModal } from "../components/GoalSettingModal";
 
 interface ReviewEmployee {
   id: string;
@@ -57,23 +58,31 @@ const Stars: React.FC<{ rating: number }> = ({ rating }) => (
 const PerformanceReviewPage: React.FC = () => {
   const [selected, setSelected] = useState<ReviewEmployee | null>(null);
   const [filterBox, setFilterBox] = useState<string | null>(null);
+  const [goalOpen, setGoalOpen] = useState(false);
 
   const displayed = filterBox ? EMPLOYEES.filter((e) => boxKey(e.performance, e.potential) === filterBox) : EMPLOYEES;
 
   return (
     <div className="space-y-8">
+      <GoalSettingModal isOpen={goalOpen} onClose={() => setGoalOpen(false)} />
       {/* Header */}
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-800">Performance Reviews</h2>
           <p className="text-slate-500 font-medium mt-1">9-box talent matrix and individual review cards.</p>
         </div>
-        {filterBox && (
-          <button onClick={() => setFilterBox(null)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors">
-            <span className="material-symbols-outlined text-sm">close</span>
-            Clear filter
+        <div className="flex gap-2">
+          <button onClick={() => setGoalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+            <span className="material-symbols-outlined text-base">flag</span>
+            Manage OKRs
           </button>
-        )}
+          {filterBox && (
+            <button onClick={() => setFilterBox(null)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors">
+              <span className="material-symbols-outlined text-sm">close</span>
+              Clear filter
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 9-box matrix */}
