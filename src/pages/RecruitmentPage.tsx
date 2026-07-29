@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { CostPerHireWidget } from "../components/CostPerHireWidget";
+import { JobDescriptionLibrary } from "../components/JobDescriptionLibrary";
 
 type Stage = "Applied" | "Screen" | "Interview" | "Offer" | "Hired";
 
@@ -208,6 +209,8 @@ const RecruitmentPage: React.FC = () => {
       </div>
       {/* Cost per hire breakdown */}
       <CostPerHireWidget />
+      {/* JD library */}
+      <JobDescriptionLibrary />
     </>
   );
 };
