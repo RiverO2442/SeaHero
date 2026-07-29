@@ -11,6 +11,7 @@ import type { PayGrade } from "../components/PayGradeTag";
 import { EmployeeOnboardingChecklist } from "../components/EmployeeOnboardingChecklist";
 import { TeamOrgChart } from "../components/TeamOrgChart";
 import { EmployeeComparisonModal } from "../components/EmployeeComparisonModal";
+import { BulkActionBar } from "../components/BulkActionBar";
 
 const PER_PAGE = 5;
 
@@ -663,6 +664,27 @@ const EmployeeDirectoryPage: React.FC = () => {
   };
 
   const someSelected = selectedIds.size > 0;
+  const selectedEmployees = employees.filter(e => selectedIds.has(e.id));
+  const clearSelection = () => setSelectedIds(new Set());
+  const handleBulkDeptChange = (dept: string) => {
+    setEmployees(prev => {
+      const next = prev.map(e => selectedIds.has(e.id) ? { ...e, department: dept } : e);
+      localStorage.setItem("salarypro_employees", JSON.stringify(next));
+      return next;
+    });
+    clearSelection();
+  };
+  const handleBulkExport = () => {
+    const rows = [["Name","Email","Department","Role"], ...selectedEmployees.map(e => [e.name, e.email, e.department, e.role])];
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "employees_export.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleBulkEmail = () => {
+    window.open(`mailto:${selectedEmployees.map(e => e.email).join(",")}`);
+  };
 
   const handleAddEmployee = (emp: DirectoryEmployee) => {
     setEmployees((prev) => {
@@ -702,6 +724,16 @@ const EmployeeDirectoryPage: React.FC = () => {
 
   return (
     <>
+      {/* Bulk action bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.size}
+        selectedNames={selectedEmployees.map(e => e.name)}
+        onClear={clearSelection}
+        onBulkDeptChange={handleBulkDeptChange}
+        onBulkExport={handleBulkExport}
+        onBulkEmail={handleBulkEmail}
+      />
+
       {/* Employee Profile Drawer */}
       <EmployeeProfileDrawer
         employee={profileEmployee}
