@@ -17,6 +17,7 @@ import { TrainingTrackerWidget } from "../components/TrainingTrackerWidget";
 import { EmployeeSentimentWidget } from "../components/EmployeeSentimentWidget";
 import { ProbationTrackerWidget } from "../components/ProbationTrackerWidget";
 import { EmployeeNPSWidget } from "../components/EmployeeNPSWidget";
+import { PulseSurveyModal } from "../components/PulseSurveyModal";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -313,6 +314,7 @@ interface DashboardOverviewProps {
 
 export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate }) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [pulseOpen, setPulseOpen] = useState(false);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -321,6 +323,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
 
   return (
   <div className="space-y-10">
+    <PulseSurveyModal isOpen={pulseOpen} onClose={() => setPulseOpen(false)} />
     {/* Onboarding */}
     <OnboardingBanner />
 
@@ -347,6 +350,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onNavigate
         >
           <span className={`material-symbols-outlined text-base ${refreshing ? "animate-spin" : ""}`}>refresh</span>
           {refreshing ? "Refreshing…" : "Refresh"}
+        </button>
+        <button onClick={() => setPulseOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
+          <span className="material-symbols-outlined text-base">poll</span>
+          Pulse Survey
         </button>
         <button className="px-5 py-2.5 bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg hover:bg-slate-300 transition-colors">
           Export Report
