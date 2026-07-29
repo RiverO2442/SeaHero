@@ -7,6 +7,7 @@ import type { PayslipEntry } from "../components/PayslipPrintModal";
 import { PayRunTimeline } from "../components/PayRunTimeline";
 import { SalaryCalculatorModal } from "../components/SalaryCalculatorModal";
 import { PayrollTaxBreakdown } from "../components/PayrollTaxBreakdown";
+import { PayslipPDFExport } from "../components/PayslipPDFExport";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -417,6 +418,7 @@ const PayrollTable: React.FC<{
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [payslipEntry, setPayslipEntry] = useState<PayrollEntry | null>(null);
   const [printEntry, setPrintEntry] = useState<PayslipEntry | null>(null);
+  const [pdfEntry, setPdfEntry] = useState<PayrollEntry | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const allSelected = entries.length > 0 && entries.every((e) => selected.has(e.id));
@@ -438,6 +440,25 @@ const PayrollTable: React.FC<{
     <>
     {payslipEntry && <SendPayslipModal entry={payslipEntry} onClose={() => setPayslipEntry(null)} />}
     {printEntry && <PayslipPrintModal entry={printEntry} period="October 2026" onClose={() => setPrintEntry(null)} />}
+    {pdfEntry && (
+      <PayslipPDFExport
+        data={{
+          employeeName: pdfEntry.name,
+          employeeId: pdfEntry.id,
+          department: pdfEntry.department,
+          role: pdfEntry.role,
+          payPeriod: "October 2026",
+          paymentDate: "31 Oct 2026",
+          grossSalary: pdfEntry.grossPay,
+          incomeTax: pdfEntry.deductions * 0.55,
+          nationalInsurance: pdfEntry.deductions * 0.3,
+          pension: pdfEntry.deductions * 0.15,
+          otherDeductions: 0,
+          netPay: pdfEntry.netPay,
+        }}
+        onClose={() => setPdfEntry(null)}
+      />
+    )}
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Table header */}
       <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -687,6 +708,13 @@ const PayrollTable: React.FC<{
                       className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-purple-50 rounded-lg transition-colors"
                     >
                       <span className="material-symbols-outlined text-sm">print</span>
+                    </button>
+                    <button
+                      onClick={() => setPdfEntry(entry)}
+                      title="Export PDF payslip"
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
                     </button>
                   </div>
                 </td>
