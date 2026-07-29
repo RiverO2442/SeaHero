@@ -20,6 +20,9 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "insights", label: "Performance", page: "performance" },
   { icon: "receipt_long", label: "Expenses", page: "expenses" },
   { icon: "volunteer_activism", label: "Benefits", page: "benefits" },
+  { icon: "diversity_3", label: "Workforce", page: "workforce" },
+  { icon: "policy", label: "Compliance", page: "compliance" },
+  { icon: "notifications", label: "Notifications", page: "notifications" },
   { icon: "settings", label: "Settings", page: "settings" },
 ];
 

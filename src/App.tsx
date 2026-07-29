@@ -14,13 +14,17 @@ import RecruitmentPage from "./pages/RecruitmentPage";
 import PerformanceReviewPage from "./pages/PerformanceReviewPage";
 import ExpenseClaimsPage from "./pages/ExpenseClaimsPage";
 import BenefitsPage from "./pages/BenefitsPage";
+import WorkforcePlanningPage from "./pages/WorkforcePlanningPage";
+import CompliancePage from "./pages/CompliancePage";
+import NotificationCenterPage from "./pages/NotificationCenterPage";
 import BackToTop from "./components/BackToTop";
 import { NetworkStatusBanner } from "./components/NetworkStatusBanner";
 import { CommandPalette } from "./components/CommandPalette";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SkeletonCard, SkeletonRow } from "./components/Skeleton";
+import { useDarkMode } from "./hooks/useDarkMode";
 
-export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "audit-log" | "leave" | "recruitment" | "performance" | "expenses" | "benefits" | "settings";
+export type Page = "dashboard" | "daily-entry" | "employees" | "payroll" | "analytics" | "reports" | "audit-log" | "leave" | "recruitment" | "performance" | "expenses" | "benefits" | "workforce" | "compliance" | "notifications" | "settings";
 
 // ─── App-wide splash skeleton ─────────────────────────────────────────────────
 const AppSkeleton: React.FC = () => (
@@ -55,9 +59,7 @@ import React from "react";
 
 function App() {
   const [activePage, setActivePage] = useState<Page>("dashboard");
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    try { return localStorage.getItem("settings_darkMode") === "true"; } catch { return false; }
-  });
+  const [darkMode, setDarkMode] = useDarkMode();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [pageKey, setPageKey] = useState(0);
   const [appReady, setAppReady] = useState(false);
@@ -111,11 +113,6 @@ function App() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("settings_darkMode", String(darkMode));
-  }, [darkMode]);
-
   // Simulate initial data load — show skeleton for 1s on first visit
   useEffect(() => {
     const t = setTimeout(() => setAppReady(true), 1000);
@@ -154,6 +151,9 @@ function App() {
             {activePage === "performance" && <PerformanceReviewPage />}
             {activePage === "expenses" && <ExpenseClaimsPage />}
             {activePage === "benefits" && <BenefitsPage />}
+            {activePage === "workforce" && <WorkforcePlanningPage />}
+            {activePage === "compliance" && <CompliancePage />}
+            {activePage === "notifications" && <NotificationCenterPage />}
             {activePage === "settings" && <SettingsPage />}
           </div>
         )}
